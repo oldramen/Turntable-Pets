@@ -5,14 +5,14 @@
  */
 
 if (mType == 1) { //Dog
-	global.mHungry = [''];
+	global.mHungry = ["I'm hungry D:"];
 }
 if (mType == 2) { //Cat
-	global.mHungry = [''];
+	global.mHungry = ["I'm hungry D:"];
 }
 if (mType == 3) { //Hamster
-	global.mHungry = [''];
+	global.mHungry = ["I'm hungry D:"];
 }
 if (mType == 4) { //Dragon
-	global.mHungry = [''];
+	global.mHungry = ["I'm hungry D:"];
 }

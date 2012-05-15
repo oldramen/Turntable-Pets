@@ -6,7 +6,7 @@
 global.mCommands = [{
     command: 'a',
     callback: function (a, b) {
-        
+        mSay(a, '{username} did command "a". congrats');
     },
     hint: 'hint'
 },
