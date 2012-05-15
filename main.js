@@ -49,7 +49,7 @@ global.OnDeregistered = function(a) {
 };
 
 global.OnSpeak = function(a) {
-  a.text.match(/^[!*\/]/) && HandleCommand(a.userid, a.text)
+  a.text.match(/^[!*\/]/) && HandleCommand(mUsers[a.userid], a.text)
 };
 
 global.mRandom = function(a) {
@@ -93,8 +93,8 @@ global.mCall = function(a) {
 };
 
 global.mSay = function(a, b) {
-  b.indexOf("{username}") && (b = b.replace("{username}", mUsers[a]));
-  mPet.speak(b + ' ' + a + ':' + mUsers[a])
+  b = b.replace("{username}", a);
+  mPet.speak(b);
 };
 
 global.mStalk = function() {
@@ -109,13 +109,13 @@ global.mStalk = function() {
 
 global.HandleCommand = function(a, b) {
   var c = b.split(" "), d = c.shift().replace(/^[!\*\/]/, ""), b = c.join(" ");
-  mCommands.filter(function(a) {
-    return a.command && a.command == d || "object" == typeof a.command && a.command.length && -1 != a.command.indexOf(d)
-  }).forEach(function(c) {
+  mCommands.filter(function(e) {
+    return e.command && e.command == d || "object" == typeof e.command && e.command.length && -1 != e.command.indexOf(d)
+  }).forEach(function(f) {
     if("hint" == b || "help" == b) {
-      return mSay(a, c.hint)
+      return mSay(a, f.hint)
     }
-    c.callback(a, b)
+    f.callback(a, b)
   })
 };
 
