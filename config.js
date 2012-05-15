@@ -12,7 +12,7 @@ global.mUserId = "user_id";//userid of bot
 global.mType = 1;
 
 //Owner of the Bot
-global.mOwner = ['4e0ff328a3f751670a084ba6'];
+global.mOwner = '4e0ff328a3f751670a084ba6';
 
 //Let's start the bot
 require("./main.js");

@@ -4,45 +4,31 @@
  * @description This is the file that contains all the commands
  */
 global.mCommands = [{
-    command: 'a',
+    command: 'speak',
     callback: function (a, b) {
-        mSay(a, '{username} did command "a". congrats');
+        a == mOwner && (mSay(a, mRandom(mSpeak)), mExp += 15, Log("Gained 15 EXP. Total EXP: " + mExp), mLevelUp(mExp));
     },
-    hint: 'hint'
+    hint: 'Makes the pet speak'
 },
 {
-    command: 'b',
+    command: 'stats',
     callback: function (a, b) {
-        
+        a == mOwner && mSay(a, "Level: " + mLevel + ", Exp: " + mExp + ", Hunger: " + mHunger);
     },
-    hint: 'hint'
-},
-{
-    command: 'c',
-    callback: function (a, b) {
-        
-    },
-    hint: 'hint'
+    hint: 'Tells the bots stats.'
 }];
 
 global.mPMCommands = [{
-	command: 'x',
+	command: 'feed',
 	callback: function (a, b) {
-
+        Log('feedme?');
 	},
 	hint: 'help'
 },
 {
-    command: 'y',
+    command: 'come',
     callback: function (a, b) {
-        
+        a == mOwner && (clearTimeout(mMoving), mStalk(mOwner, 1));
     },
-    hint: 'hint'
-},
-{
-    command: 'z',
-    callback: function (a, b) {
-        
-    },
-    hint: 'hint'
+    hint:'Summons the bot if not in the same room.'
 }] 
