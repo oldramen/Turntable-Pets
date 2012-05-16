@@ -9,7 +9,7 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4ec345804fe7d0727a0020a3";
-global.mDBName = 'pet2';
+global.mDBName = 'pet3';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
@@ -20,8 +20,7 @@ Log("Connecting to couchdb");
 global.nano = require('nano')('http://localhost:5984');
 
 Log("Finding database");
-nano.db.create(mDBName, function(a) { a ? Log("db found, connecting") : Log("db not found, creating")
-});
+nano.db.create(mDBName, function(a) { a ? Log("db found, connecting") : Log("db not found, creating")});
 
 global.store = nano.use(mDBName);
 
@@ -89,7 +88,10 @@ global.BootUp = function() {
   }, 5* 1000);
   store.get(mUserId, function(b, a) {
     if(b && "not_found" == b.error) {
-      mSave(), Log("Doc not found, creating")
+      Log("Doc not found, creating");
+    store.insert({name:mName, type:mType, exp:mExp, hunger:mHunger, level:mLevel}, mUserId, function(a) { if(a) { return console.log(a) }
+      Log("Bot Created");
+    })
     }else {
       if(b) {
         return console.log(b)
