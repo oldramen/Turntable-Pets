@@ -9,20 +9,21 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4ec345804fe7d0727a0020a3";
+global.mDBName = 'pet2';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
 global.mLanguage = require("./text.js");
 global.mCommandsMod = require("./commands.js");
-global.cradle = require("cradle");
 
 Log("Connecting to couchdb");
-global.c = new cradle.Connection({host:"localhost", port:5984, cache:true, raw:false});
+global.nano = require('nano')('http://localhost:5984');
+
 Log("Finding database");
-global.db = c.database("pets");
-db.exists(function(a, b) {
-  a ? Log("error", a) : b ? Log("db exists, using") : (Log("database does not exists."), db.create())
+nano.db.create(mDBName, function(a) { a ? Log("db found, connecting") : Log("db not found, creating")
 });
+
+global.store = nano.use(mDBName);
 
 Log("Connecting to TT");
 global.mPet = new mTTAPI(mAuthId, mUserId, mRoomId);
@@ -37,10 +38,13 @@ global.mBooted = false;
 global.mUsers = {};
 
 global.OnRegistered = function(a) {
-  a.user[0].userid == mUserId && (mBooted ? UpdateRoom() : (BootUp(), mBooted = true));
+if(a.user[0].userid == mUserId) {
+  mBooted ? UpdateRoom() : (BootUp(), mBooted = true)
+}else {
   for(i = 0;i < a.user.length;i++) {
     mUsers[a.user[i].userid] = a.user[i].name, Log("Registering " + a.user[i].name)
   }
+}
 };
 
 global.OnDeregistered = function(a) {
@@ -60,8 +64,12 @@ global.mRandom = function(a) {
 };
 
 global.mSave = function() {
-  db.save(mUserId, {name:mName, type:mType, exp:mExp, hunger:mHunger, level:mLevel}, function(a) { a && console.log(a) });
-  Log("Bot Saved")
+  store.get(mUserId, function(b, a) { if(b) { return console.log(b) }
+    a.name = mName;a.type = mType;a.exp = mExp;a.hunger = mHunger;a.level = mLevel;
+    store.insert(a, function(a) { if(a) { return console.log(a) }
+      Log("Bot Saved");
+    })
+  })
 };
 
 global.BootUp = function() {
@@ -77,17 +85,21 @@ global.BootUp = function() {
         mUsers[a.users[i].userid] = a.users[i].name, Log("Registering " + a.users[i].name)
       }
     });
+    mLevelUp(mExp);
   }, 5* 1000);
-  db.get(mUserId, function(a, b) {
-    if(a && "not_found" == a.error) {
-      return Log("Doc not found, creating it"), mSave()
+  store.get(mUserId, function(b, a) {
+    if(b && "not_found" == b.error) {
+      mSave(), Log("Doc not found, creating")
+    }else {
+      if(b) {
+        return console.log(b)
+      }
+      Log("Connected to doc: name:" + a.name + ", type:" + a.type + ", level:" + a.level + ", exp:" + a.exp + ", hunger:" + a.hunger);
+      mHunger = a.hunger;
+      mExp = a.exp;
+      mLevel = a.level
     }
-    Log("Connected to doc: name:" + b.name + ", type:" + b.type + ", level:" + b.level + ", exp:" + b.exp + ", hunger:" + b.hunger);
-    mHunger = b.hunger;
-    mExp = b.exp;
-    mLevel = b.level;
   });
-  mLevelUp(mExp)
 };
 
 global.UpdateRoom = function () {
