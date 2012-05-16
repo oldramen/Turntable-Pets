@@ -6,14 +6,15 @@
 global.mCommands = [{
     command: 'speak',
     callback: function (a, b) {
-        a == mOwner && (mSay(a, mRandom(mSpeak)), mExp += 15, Log("Gained 15 EXP. Total EXP: " + mExp), mLevelUp(mExp));
+        a == mOwner && (mSay(a, mRandom(mSpeak)), mExp += 30, Log("Gained 15 EXP. Total EXP: " + mExp), mLevelUp(mExp));
     },
     hint: 'Makes the pet speak'
 },
 {
     command: 'stats',
     callback: function (a, b) {
-        a == mOwner && mSay(a, "Level: " + mLevel + ", Exp: " + mExp + ", Hunger: " + mHunger);
+        var c;for(i = 0;i < mExpReq.length;i++) {mExp >= mExpReq[i] && (c = mExpReq[i+1])};
+        a == mOwner && mSay(a, "Level: " + mLevel + ", Exp: " + mExp + "/"+c+", Hunger: " + mHunger);
     },
     hint: 'Tells the bots stats.'
 }];
