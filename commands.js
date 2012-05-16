@@ -22,9 +22,18 @@ global.mCommands = [{
 global.mPMCommands = [{
 	command: 'feed',
 	callback: function (a, b) {
-        Log('feedme?');
+        var x = 200 - mHunger;var y = x;if (x > 50) y = 50;
+        a == mOwner && (mSay(a, mRandom(mFed)),mHunger += y, mExp += 1, Log("Gained 1 EXP. Total EXP: " + mExp), mLevelUp(mExp));
 	},
 	hint: 'help'
+},
+{
+    command: 'clean',
+    callback: function (a, b) {
+        var x = 20 - mClean;var y = x;if (y > 15) y = 15;
+        a == mOwner && (mSay(a, mRandom(mBathed)),mClean += y, mExp += 1, Log("Gained 1 EXP. Total EXP: " + mExp), mLevelUp(mExp));
+    },
+    hint: 'help'
 },
 {
     command: 'come',
