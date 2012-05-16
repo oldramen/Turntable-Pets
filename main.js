@@ -9,7 +9,7 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4ec345804fe7d0727a0020a3";
-global.mDBName = 'pet3';
+global.mDBName = 'pet';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
@@ -66,7 +66,7 @@ global.mSave = function() {
   store.get(mUserId, function(b, a) { if(b) { return console.log(b) }
     a.name = mName;a.type = mType;a.exp = mExp;a.hunger = mHunger;a.level = mLevel;
     store.insert(a, function(a) { if(a) { return console.log(a) }
-      Log("Bot Saved");
+      Log("Pet Saved");
     })
   })
 };
@@ -90,7 +90,7 @@ global.BootUp = function() {
     if(b && "not_found" == b.error) {
       Log("Doc not found, creating");
     store.insert({name:mName, type:mType, exp:mExp, hunger:mHunger, level:mLevel}, mUserId, function(a) { if(a) { return console.log(a) }
-      Log("Bot Created");
+      Log("Pet Created");
     })
     }else {
       if(b) {
