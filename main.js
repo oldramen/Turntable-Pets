@@ -122,8 +122,7 @@ global.UpdateRoom = function () {
 
 global.Loop = function() {
   mFatigue++;
-  0 === mFatigue % 60 && mPet.speak(mRandom(mIdle));
-  (60 == mFatigue || 120 == mFatigue || 180 == mFatigue || 240 == mFatigue) && mSpeak(mRandom(mIdle));
+  0 === mFatigue % 120 && mPet.speak(mRandom(mIdle));
   240 == mFatigue && (mClean--, mHunger--, mFatigue = 0, mSave());
   20 > mHunger && mCall(mRandom(mHungry));
   20 > mHunger && !mHungry && (mHungry = !0, mCall(mRandom(mHungry)));
