@@ -9,14 +9,13 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4ec345804fe7d0727a0020a3";
-global.mDBName = 'pet7';
+global.mDBName = 'pet10';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
 global._ = require("underscore");
-global.mLanguage = require("./text.js");
 global.mCommandsMod = require("./commands.js");
-global.mTypeCommands = require"./types/type"+mType+".js");
+global.mTypeCommands = require("./types/type"+mType+".js");
 
 Log("Connecting to couchdb");
 global.nano = require('nano')('http://localhost:5984');
@@ -123,8 +122,10 @@ global.UpdateRoom = function () {
 
 global.Loop = function() {
   mFatigue++;
+  0 === mFatigue % 60 && mPet.speak(mRandom(mIdle));
+  (60 == mFatigue || 120 == mFatigue || 180 == mFatigue || 240 == mFatigue) && mSpeak(mRandom(mIdle));
   240 == mFatigue && (mClean--, mHunger--, mFatigue = 0, mSave());
-  20 > mHunger && mCall(mRandom(mHungry))
+  20 > mHunger && mCall(mRandom(mHungry));
   20 > mHunger && !mHungry && (mHungry = !0, mCall(mRandom(mHungry)));
   0 == mHunger && PassOut(hunger);
 };
@@ -170,6 +171,7 @@ global.HandleCommand = function(a, b) {
   mCommands.filter(function(a) {
     return a.command && a.command == e || "object" == typeof a.command && a.command.length && -1 != a.command.indexOf(e)
   }).forEach(function(f) {
+    if (f.level > mLevel) return;
     if("hint" == b || "help" == b) {
       return mSay(a, f.hint)
     }
