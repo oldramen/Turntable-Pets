@@ -8,7 +8,7 @@ global.Log = function(a) {
   console.log(mName, ">>>", a + ".");
 };
 
-global.mRoomId = global.mCurrentRoom = "4ec345804fe7d0727a0020a3";
+global.mRoomId = global.mCurrentRoom = "4fb42b96df5bcf5587292adc";
 global.mDBName = 'pet10';
 
 global.mTTAPI = require("ttapi");
