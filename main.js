@@ -13,8 +13,10 @@ global.mDBName = 'pet7';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
+global._ = require("underscore");
 global.mLanguage = require("./text.js");
 global.mCommandsMod = require("./commands.js");
+global.mTypeCommands = require"./types/type"+mType+".js");
 
 Log("Connecting to couchdb");
 global.nano = require('nano')('http://localhost:5984');
