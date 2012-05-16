@@ -13,7 +13,7 @@ global.mCommands = [{
 {
     command: 'stats',
     callback: function (a, b) {
-        var c;for(i = 0;i < mExpReq.length;i++) {mExp >= mExpReq[i] && (c = mExpReq[i+1])};
+        var c = 30;for(i = 0;i < mExpReq.length;i++) {mExp >= mExpReq[i] && (c = mExpReq[i+1])};
         a == mOwner && mSay(a, "Level: " + mLevel + ", Exp: " + mExp + "/"+c+", Hunger: " + mHunger);
     },
     hint: 'Tells the bots stats.'
