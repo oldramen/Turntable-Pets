@@ -29,6 +29,7 @@ global.mPet = new mTTAPI(mAuthId, mUserId, mRoomId);
 
 global.mHeartBeat = null;
 global.mHunger = 100;
+global.mClean = 20;
 global.mExp = 0;
 global.mLevel = 0;
 global.mFatigue = 0;
@@ -64,7 +65,7 @@ global.mRandom = function(a) {
 
 global.mSave = function() {
   store.get(mUserId, function(b, a) { if(b) { return console.log(b) }
-    a.name = mName;a.type = mType;a.exp = mExp;a.hunger = mHunger;a.level = mLevel;
+    a.name = mName;a.type = mType;a.exp = mExp;a.hunger = mHunger;a.level = mLevel;a.clean = mClean;
     store.insert(a, function(a) { if(a) { return console.log(a) }
       Log("Pet Saved");
     })
@@ -89,17 +90,18 @@ global.BootUp = function() {
   store.get(mUserId, function(b, a) {
     if(b && "not_found" == b.error) {
       Log("Doc not found, creating");
-    store.insert({name:mName, type:mType, exp:mExp, hunger:mHunger, level:mLevel}, mUserId, function(a) { if(a) { return console.log(a) }
+    store.insert({name:mName, type:mType, exp:mExp, hunger:mHunger, level:mLevel, clean:mClean}, mUserId, function(a){ if(a){ return console.log(a) }
       Log("Pet Created");
     })
     }else {
       if(b) {
         return console.log(b)
       }
-      Log("Connected to doc: name:" + a.name + ", type:" + a.type + ", level:" + a.level + ", exp:" + a.exp + ", hunger:" + a.hunger);
+      Log("Connected to doc: name:"+a.name+", type:"+a.type+", level:"+a.level+", exp:"+a.exp+", hunger:"+a.hunger+", clean:"+a.clean);
       mHunger = a.hunger;
       mExp = a.exp;
-      mLevel = a.level
+      mLevel = a.level;
+      mClean = a.clean;
     }
   });
 };
@@ -117,7 +119,7 @@ global.UpdateRoom = function () {
 
 global.Loop = function() {
   mFatigue++;
-  240 == mFatigue && (mHunger--, mFatigue = 0);
+  240 == mFatigue && (mClean--, mHunger--, mFatigue = 0);
   20 > mHunger && mCall(mRandom(mHungry))
 };
 
