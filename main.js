@@ -9,7 +9,7 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4ec345804fe7d0727a0020a3";
-global.mDBName = 'pet';
+global.mDBName = 'pet7';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
@@ -35,6 +35,8 @@ global.mLevel = 0;
 global.mFatigue = 0;
 global.mMoving = null;
 global.mBooted = false;
+global.mHungry = false;
+global.mLevelUpReq = 30;
 global.mUsers = {};
 
 global.OnRegistered = function(a) {
@@ -85,7 +87,7 @@ global.BootUp = function() {
         mUsers[a.users[i].userid] = a.users[i].name, Log("Registering " + a.users[i].name)
       }
     });
-    mLevelUp(mExp);
+    LevelUp();
   }, 5* 1000);
   store.get(mUserId, function(b, a) {
     if(b && "not_found" == b.error) {
@@ -119,8 +121,10 @@ global.UpdateRoom = function () {
 
 global.Loop = function() {
   mFatigue++;
-  240 == mFatigue && (mClean--, mHunger--, mFatigue = 0);
+  240 == mFatigue && (mClean--, mHunger--, mFatigue = 0, mSave());
   20 > mHunger && mCall(mRandom(mHungry))
+  20 > mHunger && !mHungry && (mHungry = !0, mCall(mRandom(mHungry)));
+  0 == mHunger && PassOut(hunger);
 };
 
 global.mCall = function(a) {
@@ -148,15 +152,15 @@ global.mStalk = function(a, b) {
 
 global.mExpReq = [30, 100, 220, 550, 800, 1100, 1400, 1700, 2000, 2500, 3000, 3500, 4200, 5000, 5900, 6800, 7800, 9000, 10000, 15000];
 
-global.mLevelUp = function(a) {
-  var b = 0;
-  for(i = 0;i < mExpReq.length;i++) {
-    a >= mExpReq[i] && (b = i + 1)
+global.LevelUp = function(a) {
+  a && (mExp += a, Log("Gained " + a + " EXP, Total: " + mExp));
+  for(i = a = 0;i < mExpReq.length;i++) {
+    mExp >= mExpReq[i] && (a = i + 1, mLevelUpReq = mExpReq[i+1])
   }
-  Log("Pet is Level " + b);
-  if (b > mLevel) mSay(mOwner, "I've leveled up! I'm now level " + b + "!")
-  mLevel = b;
-  mSave();
+  Log("Pet is Level " + a);
+  a > mLevel && mSay(mOwner, "I've leveled up! I'm now level " + a + "!");
+  mLevel = a;
+  mSave()
 };
 
 global.HandleCommand = function(a, b) {
@@ -181,6 +185,13 @@ global.HandlePMCommand = function(a, b) {
     }
     d.callback(a, b)
   })
+};
+
+global.PassOut = function(a) {
+  Log('Passed out due to ' + a);
+  "hunger" == a && (mHungry = false, mHunger = 100);
+  mPet.roomRegister(mRoomId);
+  mCall("I've passed out from " + a + "!");
 };
 
 Log("Hooking Events");

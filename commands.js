@@ -6,7 +6,7 @@
 global.mCommands = [{
     command: 'speak',
     callback: function (a, b) {
-        a == mOwner && (mSay(a, mRandom(mSpeak)), mExp += 30, Log("Gained 15 EXP. Total EXP: " + mExp), mLevelUp(mExp));
+        a == mOwner && (mSay(a, mRandom(mSpeak)), LevelUp(30));
     },
     hint: 'Makes the pet speak'
 },
@@ -22,8 +22,8 @@ global.mCommands = [{
 global.mPMCommands = [{
 	command: 'feed',
 	callback: function (a, b) {
-        var x = 200 - mHunger;var y = x;if (x > 50) y = 50;
-        a == mOwner && (mSay(a, mRandom(mFed)),mHunger += y, mExp += 1, Log("Gained 1 EXP. Total EXP: " + mExp), mLevelUp(mExp));
+        var x = 100 - mHunger;if (x > 50) x = 50;
+        100 != mHunger && a == mOwner && (mPM(a, mRandom(mFed)), mHunger += x, LevelUp(1));
 	},
 	hint: 'help'
 },
@@ -31,9 +31,16 @@ global.mPMCommands = [{
     command: 'clean',
     callback: function (a, b) {
         var x = 20 - mClean;var y = x;if (y > 15) y = 15;
-        a == mOwner && (mSay(a, mRandom(mBathed)),mClean += y, mExp += 1, Log("Gained 1 EXP. Total EXP: " + mExp), mLevelUp(mExp));
+        20 != mClean && a == mOwner && (mPM(a, mRandom(mBathed)),mClean += x, LevelUp(1));
     },
     hint: 'help'
+},
+{
+    command: 'stats',
+    callback: function (a, b) {
+        a == mOwner && mPM(a, "Level: "+mLevel+", Exp: "+mExp+"/"+mLevelUpReq+", Hunger: "+mHunger+"/100, Cleanliness: "+mClean+"/20");
+    },
+    hint: 'Tells the bots stats.'
 },
 {
     command: 'come',
