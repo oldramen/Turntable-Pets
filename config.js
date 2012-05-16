@@ -7,6 +7,7 @@
 //Main Authorization
 global.mAuthId = "auth_id";//authid of bot
 global.mUserId = "user_id";//userid of bot
+global.mName = "Peekachu!";//name of the bot
 
 //Bot Type 1:Dog,2:Cat,3:Hamster,4:Dragon
 global.mType = 1;

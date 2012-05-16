@@ -59,8 +59,7 @@ global.mRandom = function(a) {
   return a[Math.floor(Math.random() * a.length)]
 };
 
-global.mSave = function(x) {
-  if (x) db.save(mUserId, {name:mName, type:mType, exp:mExp, hunger:mHunger, level:mLevel}, function(a) { a && console.log(a) });
+global.mSave = function() {
   db.save(mUserId, {name:mName, type:mType, exp:mExp, hunger:mHunger, level:mLevel}, function(a) { a && console.log(a) });
   Log("Bot Saved")
 };
@@ -81,7 +80,7 @@ global.BootUp = function() {
   }, 5* 1000);
   db.get(mUserId, function(a, b) {
     if(a && "not_found" == a.error) {
-      return Log("Doc not found, creating it"), mSave(true)
+      return Log("Doc not found, creating it"), mSave()
     }
     Log("Connected to doc: name:" + b.name + ", type:" + b.type + ", level:" + b.level + ", exp:" + b.exp + ", hunger:" + b.hunger);
     mHunger = b.hunger;
