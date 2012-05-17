@@ -13,22 +13,22 @@ global.mIdle = ["/me stretches and lays down", "/me howls", "Bark.", "i'mmmm sll
 
 global.sCommands = [{
     command: 'pet',
-    message: ["^-^", "GRRRR DON'T TOUCH ME RIGHT NOW", "/me bites hand (don't sneak up on me like that!"],
+    message: ["^-^", "GRRRR DON'T TOUCH ME RIGHT NOW", "/me bites hand (don't sneak up on me like that!)"],
     callback: function (a, b) {
         if (b == '@'+mName) mSay(a, mRandom(this.message));
     },
     level: 0,
+    mode: 0,
     hint: 'Pets the dog'
-}];
-
-global.sPMCommands = [{
+},
+{
     command: 'eat',
     callback: function (a, b) {
         if (a == mOwner) mSay(a, "/me noms on "+b);
     },
     level: 0,
+    mode: 1,
     hint: 'Pets the dog'
 }];
 
 mCommands = _.union(mCommands, sCommands);
-mPMCommands = _.union(mPMCommands, sPMCommands);

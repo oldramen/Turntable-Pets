@@ -12,7 +12,4 @@ global.mBathed = ["B'awww, I hate baths!"];
 
 global.sCommands = [];
 
-global.sPMCommands = [] ;
-
 mCommands = _.union(mCommands, sCommands);
-mPMCommands = _.union(mPMCommands, sPMCommands);

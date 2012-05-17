@@ -18,17 +18,17 @@ global.sCommands = [{
         if (b == '@'+mName) mSay(a, mRandom(this.message));
     },
     level: 0,
+    mode: 0,
     hint: 'Pets the dragon'
-}];
-
-global.sPMCommands = [{
+},
+{
     command: 'eat',
     callback: function (a, b) {
         if (a == mOwner) mSay(a, "/me noms on "+b);
     },
     level: 0,
+    mode: 1,
     hint: 'Pets the dragon'
 }];
 
 mCommands = _.union(mCommands, sCommands);
-mPMCommands = _.union(mPMCommands, sPMCommands);

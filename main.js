@@ -59,7 +59,7 @@ global.OnSpeak = function(a) {
 };
 
 global.OnPmmed = function(a) {
-  a.text.match(/^[!*\/]/) && HandlePMCommand(a.senderid, a.text)
+  a.text.match(/^[!*\/]/) && HandleCommand(a.senderid, a.text, true)
 };
 
 global.mRandom = function(a) {
@@ -159,28 +159,15 @@ global.LevelUp = function(a) {
   mSave()
 };
 
-global.HandleCommand = function(a, b) {
-  var d = b.split(" "), e = d.shift().replace(/^[!\*\/]/, ""), b = d.join(" ");
+global.HandleCommand = function(c, b, d) {
+  var e = b.split(" "), f = e.shift().replace(/^[!\*\/]/, ""), b = e.join(" ");
   mCommands.filter(function(a) {
-    return a.command && a.command == e || "object" == typeof a.command && a.command.length && -1 != a.command.indexOf(e)
-  }).forEach(function(f) {
-    if (f.level > mLevel) return;
-    if("hint" == b || "help" == b) {
-      return mSay(a, f.hint)
+    return a.command && a.command == f || "object" == typeof a.command && a.command.length && -1 != a.command.indexOf(f)
+  }).forEach(function(a) {
+    if(!(a.level > mLevel) && !(d && 1 > a.mode) && (d || 1 != a.mode)) {
+      if("hint" == b || "help" == b) { return mSay(c, a.hint) }
+      a.callback(c, b, d)
     }
-    f.callback(a, b)
-  })
-};
-
-global.HandlePMCommand = function(a, b) {
-  var d = b.split(" "), e = d.shift().replace(/^[!\*\/]/, ""), b = d.join(" ");
-  mPMCommands.filter(function(a) {
-    return a.command && a.command == e || "object" == typeof a.command && a.command.length && -1 != a.command.indexOf(e)
-  }).forEach(function(d) {
-    if("hint" == b || "help" == b) {
-      return mSay(a, d.hint)
-    }
-    d.callback(a, b)
   })
 };
 
