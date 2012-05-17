@@ -66,9 +66,10 @@ global.mRandom = function(a) {
   return a[Math.floor(Math.random() * a.length)]
 };
 
-global.mSave = function() {
+global.mSave = function(y, z) {
   store.get(mUserId, function(b, a) { if(b) { return console.log(b) }
-    a.name = mName;a.type = mType;a.exp = mExp;a.hunger = mHunger;a.level = mLevel;a.clean = mClean;
+    if(!y || !z) { a.name = mName, a.type = mType, a.exp = mExp, a.hunger = mHunger, a.level = mLevel, a.clean = mClean }
+    y && z && (a.y = z);
     store.insert(a, function(a) { if(a) { return console.log(a) }
       Log("Pet Saved");
     })
@@ -93,18 +94,11 @@ global.BootUp = function() {
   store.get(mUserId, function(b, a) {
     if(b && "not_found" == b.error) {
       Log("Doc not found, creating");
-    store.insert({name:mName, type:mType, exp:mExp, hunger:mHunger, level:mLevel, clean:mClean}, mUserId, function(a){ if(a){ return console.log(a) }
+      store.insert({name:mName, type:mType, exp:mExp, hunger:mHunger, level:mLevel, clean:mClean}, mUserId, function(a){if(a){return console.log(a)}
       Log("Pet Created");
-    })
-    }else {
-      if(b) {
-        return console.log(b)
-      }
-      Log("Connected to doc: name:"+a.name+", type:"+a.type+", level:"+a.level+", exp:"+a.exp+", hunger:"+a.hunger+", clean:"+a.clean);
-      mHunger = a.hunger;
-      mExp = a.exp;
-      mLevel = a.level;
-      mClean = a.clean;
+    })}else { if(b) { return console.log(b) }
+    Log("Connected to doc:");console.log(a);
+    mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;
     }
   });
 };
