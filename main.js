@@ -9,13 +9,14 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4fb42b96df5bcf5587292adc";
-global.mDBName = 'pet10';
+global.mDBName = 'fight1';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
 global._ = require("underscore");
 global.mCommandsMod = require("./commands.js");
 global.mTypeCommands = require("./types/type"+mType+".js");
+if (mType == 4) require("./fight.js");
 
 Log("Connecting to couchdb");
 global.nano = require('nano')('http://localhost:5984');
@@ -35,9 +36,13 @@ global.mExp = 0;
 global.mLevel = 0;
 global.mFatigue = 0;
 global.mMoving = null;
+global.mFighting = false;
+global.mCalledOut = false;
 global.mBooted = false;
 global.mHungry = false;
 global.mLevelUpReq = 30;
+global.mHP = null;
+global.mCurrentHP = mHP;
 global.mUsers = {};
 
 global.OnRegistered = function(a) {
@@ -55,7 +60,7 @@ global.OnDeregistered = function(a) {
 };
 
 global.OnSpeak = function(a) {
-  a.text.match(/^[!*\/]/) && HandleCommand(a.userid, a.text)
+  a.text.match(/^[!*\/]/) && HandleCommand(a.userid, a.text, false)
 };
 
 global.OnPmmed = function(a) {
@@ -68,7 +73,7 @@ global.mRandom = function(a) {
 
 global.mSave = function(y, z) {
   store.get(mUserId, function(b, a) { if(b) { return console.log(b) }
-    if(!y || !z) { a.name = mName, a.type = mType, a.exp = mExp, a.hunger = mHunger, a.level = mLevel, a.clean = mClean }
+    if(!y || !z) { a.name = mName, a.type = mType, a.exp = mExp, a.hunger = mHunger, a.level = mLevel, a.clean = mClean, a.hp = mHP }
     y && z && (a.y = z);
     store.insert(a, function(a) { if(a) { return console.log(a) }
       Log("Pet Saved");
@@ -98,7 +103,7 @@ global.BootUp = function() {
       Log("Pet Created");
     })}else { if(b) { return console.log(b) }
     Log("Connected to doc:");console.log(a);
-    mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;
+    mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;mHP = a.hp;
     }
   });
 };
@@ -121,6 +126,7 @@ global.Loop = function() {
   20 > mHunger && mCall(mRandom(mHungry));
   20 > mHunger && !mHungry && (mHungry = !0, mCall(mRandom(mHungry)));
   0 == mHunger && PassOut(hunger);
+  4 == mType && mCurrentHP < mHP && mCurrentHP++;
 };
 
 global.mCall = function(a) {
@@ -154,19 +160,25 @@ global.LevelUp = function(a) {
     mExp >= mExpReq[i] && (a = i + 1, mLevelUpReq = mExpReq[i+1])
   }
   Log("Pet is Level " + a);
-  a > mLevel && mSay(mOwner, "I've leveled up! I'm now level " + a + "!");
+  a > mLevel && (4 == mType && (mHP += 50), mSay(mOwner, "I've leveled up! I'm now level " + a + "!"));
   mLevel = a;
   mSave()
 };
 
-global.HandleCommand = function(c, b, d) {
-  var e = b.split(" "), f = e.shift().replace(/^[!\*\/]/, ""), b = e.join(" ");
-  mCommands.filter(function(a) {
-    return a.command && a.command == f || "object" == typeof a.command && a.command.length && -1 != a.command.indexOf(f)
+global.HandleCommand = function(d, b, e) {
+  var f = b.split(" "), c = f.shift().replace(/^[!\*\/]/, ""), b = f.join(" ");
+  mFighting ? mAttacks.filter(function(a) {
+    return a.command && a.command == c || "object" == typeof a.command && a.command.length && -1 != a.command.indexOf(c)
   }).forEach(function(a) {
-    if(!(a.level > mLevel) && !(d && 1 > a.mode) && (d || 1 != a.mode)) {
-      if("hint" == b || "help" == b) { return mSay(c, a.hint) }
-      a.callback(c, b, d)
+    a.level > mLevel || a.callback(d, b, e)
+  }) : mCommands.filter(function(a) {
+    return a.command && a.command == c || "object" == typeof a.command && a.command.length && -1 != a.command.indexOf(c)
+  }).forEach(function(a) {
+    if(!(a.level > mLevel) && !(e && 0 == a.mode)) {
+      if("hint" == b || "help" == b) {
+        return mSay(d, a.hint)
+      }
+      a.callback(d, b, e)
     }
   })
 };
