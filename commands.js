@@ -72,8 +72,7 @@ global.mCommands = [{
         mFighting = true;
         mOwnTurn = true;
         mPM(mOpponent, "/accepted");
-        mCall("It's your turn! Pick an attack!");
-        mSay(a, "Fighting!");
+        mCall("It's your turn! Pick an /attack!");
     },
     level: 1,
     mode: 1,
@@ -83,7 +82,7 @@ global.mCommands = [{
     command: 'accepted',
     callback: function(a,b,c){
         mFighting = true;
-        mSay(a, "Fighting!");
+        mCall("Opponent Accepted! Wait for your turn");
     },
     level: 1,
     mode: 1,

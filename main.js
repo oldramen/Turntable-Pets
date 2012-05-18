@@ -9,7 +9,7 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4fb42b96df5bcf5587292adc";
-global.mDBName = 'fight2';
+global.mDBName = 'fight3';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
@@ -131,7 +131,7 @@ global.Loop = function() {
   20 > mHunger && mCall(mRandom(mHungry));
   20 > mHunger && !mHungry && (mHungry = !0, mCall(mRandom(mHungry)));
   0 == mHunger && PassOut(hunger);
-  4 == mType && mCurrentHP < mHP && mCurrentHP++;
+  4 == mType && mLevel > 0 && mCurrentHP < mHP && mCurrentHP++;
 };
 
 global.mCall = function(a) {
@@ -166,7 +166,7 @@ global.LevelUp = function(a) {
     mExp >= mExpReq[i] && (a = i + 1, mLevelUpReq = mExpReq[i+1])
   }
   Log("Pet is Level " + a);
-  a > mLevel && (4 == mType && (mHP += 50), mSay(mOwner, "I've leveled up! I'm now level " + a + "!"));
+  a > mLevel && (4 == mType && (mHP += 50), (mCurrentHP = mHP), mSay(mOwner, "I've leveled up! I'm now level " + a + "!"));
   mLevel = a;
   mSave()
 };
