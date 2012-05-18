@@ -18,7 +18,7 @@ global.mOffense = function(){
         mPM(mOpponent, "/ftimedout");
         mCall('Fight Timed Out!');
         mCalledOut = null;mOpponent = null;mFighting = false;mOwnTurn = false;
-    })
+    }, 30000)
 };
 
 global.mDefense = function(a) {
@@ -61,11 +61,9 @@ global.mAttacks = [{
 {
     command: 'fainted',
     callback: function(a, b, c) {
-        //some exotic function here to determine how much
-        //exp you get, based on the level of the oppent,sent as b.
-        //LevelUp(b);
         mCall("Opponent fainted!");
         mCalledOut = null;mOpponent = null;mFighting = false;mCooldown = true;mOwnTurn = false;
+        LevelUp(b*5);
         setTimeout(function(){ mCooldown = false; }, 1000 * 60 * 5);
     }
 },

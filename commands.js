@@ -132,9 +132,20 @@ global.mCommands = [{
 {
     command: 'come',
     callback: function (a, b, c) {
+        if (mStay) mStay = false;
         a == mOwner && (clearTimeout(mMoving), mStalk(mOwner, 1));
     },
     level: 0,
     mode: 1,
     hint:'Summons the bot if not in the same room.'
+},
+{
+    command: 'stay',
+    callback: function(a,b,c){
+        a == mOwner && mStay = true;
+        mCall("I'll stay here til you get back!");
+    },
+    level: 0,
+    mode: 2,
+    hint: 'Makes the bot stay'
 }] 

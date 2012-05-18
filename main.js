@@ -43,6 +43,7 @@ global.mHungry = false;
 global.mLevelUpReq = 30;
 global.mHP = null;
 global.mCurrentHP = mHP;
+global.mStay = false;
 global.mUsers = [];
 
 global.OnRegistered = function(a) {
@@ -144,6 +145,7 @@ global.mSay = function(a, b) {
 };
 
 global.mStalk = function(a, b) {
+  if (mStay) return;
   mMoving = setTimeout(function() {
     mPet.stalk(a, function(a) {
       void 0 === a.roomId && mPet.roomRegister(mRoomId);
