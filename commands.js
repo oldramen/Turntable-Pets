@@ -54,7 +54,7 @@ global.mCommands = [{
     level: 1,
     mode: 1,
     hint: 'oppenent is cooling down'
-}
+},
 {
     command: 'ftimedout',
     callback: function(a, b, c) {

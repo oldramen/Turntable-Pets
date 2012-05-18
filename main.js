@@ -47,17 +47,21 @@ global.mStay = false;
 global.mUsers = [];
 
 global.OnRegistered = function(a) {
-if(a.user[0].userid == mUserId) {
-  mBooted ? UpdateRoom() : (BootUp(), mBooted = true)
-}else {
-  for(i = 0;i < a.user.length;i++) {
-    mUsers.push({userid: a.user[i].userid, name: a.user[i].name}), Log("Registering " + a.user[i].name)
+  if(a.user[0].userid == mUserId) {
+    mBooted ? UpdateRoom() : (BootUp(), mBooted = true)
+  }else {
+    for(i = 0;i < a.user.length;i++) {
+      mUsers.push({userid: a.user[i].userid, name: a.user[i].name}), Log("Registering " + a.user[i].name)
+    }
   }
-}
+  150 < mUsers.length && (mCall("Too many people, hiding in the playpen"), mPet.roomRegister(mRoomId));
 };
 
 global.OnDeregistered = function(a) {
   a.user[0].userid == mOwner && (Log('Owner left, waiting to follow'), mStalk(mOwner, 20))
+  for(i = 0;i < mUsers.length;i++) {
+    mUsers[i].userid == a.user[0].userid && (mUsers.splice(mUsers.indexOf(mUsers[i]), 1), Log("Deregistering " + a.user[0].name));
+  }
 };
 
 global.OnSpeak = function(a) {
@@ -74,7 +78,7 @@ global.mRandom = function(a) {
 
 global.mSave = function(y, z) {
   store.get(mUserId, function(b, a) { if(b) { return console.log(b) }
-    if(!y || !z) {a.name = mName, a.type = mType, a.exp = mExp, a.hunger = mHunger, a.level = mLevel, a.clean = mClean, a.hp = mCurrentHP, a.mhp = m.HP}
+    if(!y || !z) {a.name = mName, a.type = mType, a.exp = mExp, a.hunger = mHunger, a.level = mLevel, a.clean = mClean, a.hp = mCurrentHP, a.mhp = mHP}
     y && z && (a.y = z);
     store.insert(a, function(a) { if(a) { return console.log(a) }
       Log("Pet Saved");
@@ -114,7 +118,7 @@ global.UpdateRoom = function () {
   setTimeout(function(){
     mPet.roomInfo(function(a) {
       for(i = 0;i < a.users.length;i++) {
-        mUsers.push({userid: a.users[i].userid, name: a.users[i].name}), Log("Registering " + a.users[i].name)
+        mUsers.push({userid: a.users[i].userid, name: a.users[i].name}), Log("Registering " + a.users[i].name), mCurrentRoom = a.room.roomid;
       }
     });
   }, 5* 1000);  
