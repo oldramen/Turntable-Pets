@@ -6,13 +6,75 @@
  */
 global.mCommands = [{
     command: 'fight',
-    callback: function(a, b, c) {
-      //if type = 4, cycle through names (b). If b exists, pm b a message to fight
-      //if b is bot, b will pm its owner if it wants to fight or not, if yes, fight starts
+    callback: function(b, a) {
+      if(4 == mType) {
+        if(mCooldown) return mPM(mOwner, mCoolDownFight);
+        for(i = 0;i < mUsers.length;i++) {
+          mUsers[i].name == a && (mPM(mUsers[i].userid, "/reqconf"), mCalledOut = !0, mOpponent = mUsers[i].userid, mConfTime = setTimeout(function() {
+            mCalledOut = false;mOpponent = null;}, 5000))
+        }
+      }
     },
     level: 1,
     mode: 1,
-    hint: 'Makes the pet speak'
+    hint: 'Makes the pet fight'
+},
+{
+    command: 'reqconf',
+    callback: function(a) {
+      if(!mCalledOut && !mCooldown && !mOpponent) {
+        for(i = 0;i < mUsers.length;i++) {
+          mUsers[i].userid == a && (mCalledOut = !0, mOpponent = a, mCall(mUsers[i].name + " wants to fight! Type /accept to fight!"), mPM(a, "/sendconf"), mOwnConf = setTimeout(function() {
+            mPM(mOpponent, "/ftimedout");
+            mOpponent = mCalledOut = null
+          }, 15000))
+        }
+      }
+    },
+    level: 1,
+    mode: 1,
+    hint: 'responds to fights'
+},
+{
+    command: 'sendconf',
+    callback: function(a,b,c){
+        if (a == mOpponent) clearTimeout(mConfTime);
+    },
+    level: 1,
+    mode: 1,
+    hint: 'confirms is bot'
+},
+{
+    command: 'ftimedout',
+    callback: function(a, b, c) {
+        mCall('Fight Timed Out!');
+        mCalledOut = null;mOpponent = null;
+    },
+    level: 1,
+    mode: 1, 
+    hint: 'times out'
+},
+{
+    command: 'accept',
+    callback: function(a,b,c){
+        clearTimeout(mOwnConf);
+        mFighting = true;
+        mPM(mOpponent, "/accepted");
+        mSay(a, "Fighting!");
+    },
+    level: 1,
+    mode: 1,
+    hint: 'accept a fight'
+},
+{
+    command: 'accepted',
+    callback: function(a,b,c){
+        mFighting = true;
+        mSay(a, "Fighting!");
+    },
+    level: 1,
+    mode: 1,
+    hint: 'accepted'
 },
 {
     command: 'speak',

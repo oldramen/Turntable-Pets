@@ -7,6 +7,9 @@
 
 global.mOpponent = null;
 global.mCooldown = false;
+global.mConfTime = null;
+global.mOwnConf = null;
+global.mOwnTurn = false;
 
 global.mAttacks = [{
     command: 'headbutt',

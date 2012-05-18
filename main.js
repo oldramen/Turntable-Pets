@@ -43,14 +43,14 @@ global.mHungry = false;
 global.mLevelUpReq = 30;
 global.mHP = null;
 global.mCurrentHP = mHP;
-global.mUsers = {};
+global.mUsers = [];
 
 global.OnRegistered = function(a) {
 if(a.user[0].userid == mUserId) {
   mBooted ? UpdateRoom() : (BootUp(), mBooted = true)
 }else {
   for(i = 0;i < a.user.length;i++) {
-    mUsers[a.user[i].userid] = a.user[i].name, Log("Registering " + a.user[i].name)
+    mUsers.push({userid: a.user[i].userid, name: a.user[i].name}), Log("Registering " + a.user[i].name)
   }
 }
 };
@@ -91,7 +91,7 @@ global.BootUp = function() {
   setTimeout(function(){
     mPet.roomInfo(function(a) {
       for(i = 0;i < a.users.length;i++) {
-        mUsers[a.users[i].userid] = a.users[i].name, Log("Registering " + a.users[i].name)
+        mUsers.push({userid: a.users[i].userid, name: a.users[i].name}), Log("Registering " + a.users[i].name)
       }
     });
     LevelUp();
@@ -113,7 +113,7 @@ global.UpdateRoom = function () {
   setTimeout(function(){
     mPet.roomInfo(function(a) {
       for(i = 0;i < a.users.length;i++) {
-        mUsers[a.users[i].userid] = a.users[i].name, Log("Registering " + a.users[i].name)
+        mUsers.push({userid: a.users[i].userid, name: a.users[i].name}), Log("Registering " + a.users[i].name)
       }
     });
   }, 5* 1000);  

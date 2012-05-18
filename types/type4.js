@@ -10,6 +10,7 @@ global.mSpeak = ["Ohi there :D", "ROAR. Fear me.", "*grumble*. Tell me what to d
 global.mFed = ["Omnomnom!", "That's it? They used to give me feats, you know"];
 global.mBathed = ["B'awww, I hate baths!", "Try that one more time, and I'll kill you."];
 global.mIdle = ["/me stretches wings", "/me yawns", "rawr.", "brawr!"];
+global.mCoolDownFight = "Sorry, I can't fight yet. Let me rest for a bit.";
 
 global.sCommands = [{
     command: 'pet',
