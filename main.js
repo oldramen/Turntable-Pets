@@ -9,7 +9,7 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4fb42b96df5bcf5587292adc";
-global.mDBName = 'fight1';
+global.mDBName = 'fight2';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
@@ -73,7 +73,7 @@ global.mRandom = function(a) {
 
 global.mSave = function(y, z) {
   store.get(mUserId, function(b, a) { if(b) { return console.log(b) }
-    if(!y || !z) { a.name = mName, a.type = mType, a.exp = mExp, a.hunger = mHunger, a.level = mLevel, a.clean = mClean, a.hp = mHP }
+    if(!y || !z) {a.name = mName, a.type = mType, a.exp = mExp, a.hunger = mHunger, a.level = mLevel, a.clean = mClean, a.hp = mCurrentHP, a.mhp = m.HP}
     y && z && (a.y = z);
     store.insert(a, function(a) { if(a) { return console.log(a) }
       Log("Pet Saved");

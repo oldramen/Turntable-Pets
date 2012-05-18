@@ -23,13 +23,15 @@ global.mCommands = [{
     command: 'reqconf',
     callback: function(a) {
       if(!mCalledOut && !mCooldown && !mOpponent) {
-        for(i = 0;i < mUsers.length;i++) {
-          mUsers[i].userid == a && (mCalledOut = !0, mOpponent = a, mCall(mUsers[i].name + " wants to fight! Type /accept to fight!"), mPM(a, "/sendconf"), mOwnConf = setTimeout(function() {
+        for(i = 0;i < mUsers.length;) {
+          return mUsers[i].userid == a && (mCalledOut = !0), mOpponent = a, mCall(mUsers[i].name + " wants to fight! Type /accept to fight!"), mPM(a, "/sendconf"), mOwnConf = setTimeout(function() {
             mPM(mOpponent, "/ftimedout");
+            mCall("Fight Timed Out!");
             mOpponent = mCalledOut = null
-          }, 15000))
+          }, 15000)
         }
-      }
+      };
+      if (mCooldown) {mPM(a, "/cooldown")}
     },
     level: 1,
     mode: 1,
@@ -45,6 +47,15 @@ global.mCommands = [{
     hint: 'confirms is bot'
 },
 {
+    command: 'cooldown',
+    callback: function() {
+        mCall("Oppenent is too weak to fight!");
+    },
+    level: 1,
+    mode: 1,
+    hint: 'oppenent is cooling down'
+}
+{
     command: 'ftimedout',
     callback: function(a, b, c) {
         mCall('Fight Timed Out!');
@@ -59,7 +70,9 @@ global.mCommands = [{
     callback: function(a,b,c){
         clearTimeout(mOwnConf);
         mFighting = true;
+        mOwnTurn = true;
         mPM(mOpponent, "/accepted");
+        mCall("It's your turn! Pick an attack!");
         mSay(a, "Fighting!");
     },
     level: 1,
