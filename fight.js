@@ -41,13 +41,14 @@ global.mAttacks = [{
     callback:function(a,b,c){
         var sAttacks = [];
         mAttacks.forEach(function (d) {
-            if(mLevel >= d.level) sAttacks.push(d.command);
+            if(mLevel >= d.level && !d.hidden) sAttacks.push(d.command);
         });
-        var b = "Available attacks: {attacks}"
-        mSay(a, b.replace('{attacks}', sAttacks.join(', /')));
+        var b = "Available attacks: /{attacks}"
+        mCall(b.replace('{attacks}', sAttacks.join(', /')));
     },
     level: 1,
     mode: 1,
+    hidden: true,
     hint: 'shows possible attacks'
 },
 {
@@ -60,6 +61,7 @@ global.mAttacks = [{
     },
     level: 1,
     mode: 1,
+    hidden: true,
     hint: 'change of information'
 },
 {
@@ -70,6 +72,7 @@ global.mAttacks = [{
     },
     level: 0,
     mode: 2,
+    hidden: true,
     hint: 'Tells the bots stats.'
 },
 {
@@ -80,6 +83,7 @@ global.mAttacks = [{
     },
     level: 1,
     mode: 1, 
+    hidden: true,
     hint: 'times out'
 },
 {
@@ -90,7 +94,11 @@ global.mAttacks = [{
         clearTimeout(mFightTime);
         mCall("Opponent fainted! I gained "+b*7+" exp!");
         setTimeout(function(){ mCooldown = false; }, 1000 * 60 * 5);
-    }
+    },
+    level: 1,
+    mode: 1,
+    hidden: true,
+    hint: 'faints'
 },
 ///Now that we have the handshakes out of the way, the actual attacks
 {

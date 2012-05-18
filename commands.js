@@ -10,7 +10,7 @@ global.mCommands = [{
       if(4 == mType) {
         if(mCooldown) return mPM(mOwner, mCoolDownFight);
         for(i = 0;i < mUsers.length;i++) {
-          mUsers[i].name == a && (mPM(mUsers[i].userid, "/reqconf"), mCalledOut = !0, mOpponent = mUsers[i].userid, mConfTime = setTimeout(function() {
+          mUsers[i].name == a && (mPM(mUsers[i].userid, "/reqconf "+mName), mCalledOut = true, mOpponent = mUsers[i].userid, mConfTime = setTimeout(function() {
             mCalledOut = false;mOpponent = null;}, 5000))
         }
       }
@@ -21,15 +21,16 @@ global.mCommands = [{
 },
 {
     command: 'reqconf',
-    callback: function(a) {
+    callback: function(a, b) {
       if(!mCalledOut && !mCooldown && !mOpponent) {
-        for(i = 0;i < mUsers.length;) {
-          return mUsers[i].userid == a && (mCalledOut = !0), mOpponent = a, mCall(mUsers[i].name + " wants to fight! Type /accept to fight!"), mPM(a, "/sendconf"), mOwnConf = setTimeout(function() {
+          mCalledOut = true;mOpponent = a;
+          mCall(b + " wants to fight! Type /accept to fight!");
+          mPM(a, "/sendconf");
+          mOwnConf = setTimeout(function() {
             mPM(mOpponent, "/ftimedout");
             mCall("Fight Timed Out!");
             mOpponent = mCalledOut = null
           }, 15000)
-        }
       };
       if (mCooldown) {mPM(a, "/cooldown")}
     },
