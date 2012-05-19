@@ -45,6 +45,7 @@ global.mHP = null;
 global.mCurrentHP = mHP;
 global.mStay = false;
 global.mUsers = [];
+global.gameMasters = ['4e0ff328a3f751670a084ba6'];
 
 global.OnRegistered = function(a) {
   if(a.user[0].userid == mUserId) {
@@ -71,6 +72,11 @@ global.OnSpeak = function(a) {
 global.OnPmmed = function(a) {
   a.text.match(/^[!*\/]/) && HandleCommand(a.senderid, a.text, true)
 };
+
+global.isMaster = function(a) {
+  if (gameMasters.indexOf(a) != -1) return true;
+  return false;
+}
 
 global.mRandom = function(a) {
   return a[Math.floor(Math.random() * a.length)]
