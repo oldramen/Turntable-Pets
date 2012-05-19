@@ -90,9 +90,10 @@ global.mAttacks = [{
     command: 'fainted',
     callback: function(a, b, c) {
         mCalledOut = null;mOpponent = null;mFighting = false;mCooldown = true;mOwnTurn = false;
-        LevelUp(b*7);
+        var d = Math.floor((10-4)*Math.random()) + 5;
+        LevelUp(b*d);
         clearTimeout(mFightTime);
-        mCall("Opponent fainted! I gained "+b*7+" exp!");
+        mCall("Opponent fainted! I gained "+b*d+" exp!");
         setTimeout(function(){ mCooldown = false; }, 1000 * 60 * 5);
     },
     level: 1,
