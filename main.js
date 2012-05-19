@@ -102,11 +102,12 @@ global.BootUp = function() {
   setTimeout(function(){
     mPet.roomInfo(function(a) {
       for(i = 0;i < a.users.length;i++) {
-        mUsers.push({userid: a.users[i].userid, name: a.users[i].name}), Log("Registering " + a.users[i].name)
+        mUsers.push({userid: a.users[i].userid, name: a.users[i].name});
+        Log("Registering " + a.users[i].name);
       }
     });
     LevelUp();
-  }, 5* 1000);
+  }, 5*1000);
   store.get(mUserId, function(b, a) {
     if(b && "not_found" == b.error) {
       Log("Doc not found, creating");
@@ -120,7 +121,7 @@ global.BootUp = function() {
 };
 
 global.UpdateRoom = function () {
-  mUsers = {};
+  mUsers = [];
   setTimeout(function(){
     mPet.roomInfo(function(a) {
       for(i = 0;i < a.users.length;i++) {
