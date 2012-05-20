@@ -13,9 +13,9 @@ global.mIdle = ["/me stretches and lays down", "/me howls", "Bark.", "i'mmmm sll
 
 global.sCommands = [{
     command: 'pet',
-    message: ["^-^ Thank youuuuu :D", "<3", "/me howls (happy)", "/me bites hand (don't sneak up on me like that!"],
+    message: ["^-^ Thank youuuuu :D", "<3", "/me howls (happy)", "/me bites hand (don't sneak up on me like that!)"],
     callback: function (a, b) {
-        if (b == '@'+mName) mSay(a, mRandom(this.message));
+        if (b == '@'+mName) Say(a, Random(this.message));
     },
     level: 0,
     mode: 0,
@@ -24,7 +24,7 @@ global.sCommands = [{
 {
     command: 'eat',
     callback: function (a, b) {
-        if (a == mOwner) mSay(a, "/me chows down on "+b);
+        if (a == mOwner) Say(a, "/me chows down on "+b);
     },
     level: 0,
     mode: 1,

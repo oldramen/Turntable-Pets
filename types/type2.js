@@ -15,7 +15,7 @@ global.sCommands = [{
     command: 'pet',
     message: ["purrrrrrrrr", ":cat: (happy)", "miiieeeoowwwww.", "HISSSSS! you scared me!"],
     callback: function (a, b) {
-        if (b == '@'+mName) mSay(a, mRandom(this.message));
+        if (aboutMe(b)) Say(a, Random(this.message));
     },
     level: 0,
     mode: 0,
@@ -24,7 +24,7 @@ global.sCommands = [{
 {
     command: 'eat',
     callback: function (a, b) {
-        if (a == mOwner) mSay(a, "/me quietly chews on "+b);
+        if (a == mOwner) Say(a, "/me quietly chews on "+b);
     },
     level: 0,
     mode: 1,

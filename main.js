@@ -9,7 +9,7 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4fb42b96df5bcf5587292adc";
-global.mDBName = 'fight3';
+global.mDBName = 'fight6';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
@@ -36,8 +36,9 @@ global.mExp = 0;
 global.mLevel = 0;
 global.mFatigue = 0;
 global.mMoving = null;
+global.mArena = null;
 global.mFighting = false;
-global.mCalledOut = false;
+global.CalledOut = false;
 global.mBooted = false;
 global.mHungry = false;
 global.mLevelUpReq = 30;
@@ -55,11 +56,11 @@ global.OnRegistered = function(a) {
       mUsers.push({userid: a.user[i].userid, name: a.user[i].name}), Log("Registering " + a.user[i].name)
     }
   }
-  150 < mUsers.length && (mCall("Too many people, hiding in the playpen"), mPet.roomRegister(mRoomId));
+  150 < mUsers.length && (Call("Too many people, hiding in the playpen"), mPet.roomRegister(mRoomId));
 };
 
 global.OnDeregistered = function(a) {
-  a.user[0].userid == mOwner && (Log('Owner left, waiting to follow'), mStalk(mOwner, 20))
+  a.user[0].userid == mOwner && (Log('Owner left, waiting to follow'), Stalk(mOwner, 20))
   for(i = 0;i < mUsers.length;i++) {
     mUsers[i].userid == a.user[0].userid && (mUsers.splice(mUsers.indexOf(mUsers[i]), 1), Log("Deregistering " + a.user[0].name));
   }
@@ -70,21 +71,30 @@ global.OnSpeak = function(a) {
 };
 
 global.OnPmmed = function(a) {
-  a.text.match(/^[!*\/]/) && HandleCommand(a.senderid, a.text, true)
+  a.text.match(/^[!*\/]/) && HandleCommand(a.senderid, a.text, true), console.log("PM: "+a.text)
 };
 
 global.isMaster = function(a) {
   if (gameMasters.indexOf(a) != -1) return true;
   return false;
-}
+};
 
-global.mRandom = function(a) {
+global.aboutMe = function(a){
+  if (b == '@'+mName) return true;
+  return false;
+};
+
+global.Random = function(a) {
   return a[Math.floor(Math.random() * a.length)]
 };
 
-global.mSave = function(y, z) {
+global.Save = function(y, z) {
   store.get(mUserId, function(b, a) { if(b) { return console.log(b) }
-    if(!y || !z) {a.name = mName, a.type = mType, a.exp = mExp, a.hunger = mHunger, a.level = mLevel, a.clean = mClean, a.hp = mCurrentHP, a.mhp = mHP}
+    if(!y || !z) {
+      a.name = mName, a.type = mType, a.exp = mExp, a.hunger = mHunger,
+      a.level = mLevel, a.clean = mClean, a.hp = mCurrentHP, a.mhp = mHP,
+      a.wins = 0, a.losses = 0
+    }
     y && z && (a.y = z);
     store.insert(a, function(a) { if(a) { return console.log(a) }
       Log("Pet Saved");
@@ -95,7 +105,7 @@ global.mSave = function(y, z) {
 global.BootUp = function() {
   mPet.modifyProfile({name:mName});
   mPet.modifyName(mName);
-  mStalk(mOwner, 1);
+  Stalk(mOwner, 1);
   mHeartBeat = setInterval(function() {
     Loop()
   }, 15 * 1000);
@@ -115,7 +125,7 @@ global.BootUp = function() {
       Log("Pet Created");
     })}else { if(b) { return console.log(b) }
     Log("Connected to doc:");console.log(a);
-    mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;mHP = a.hp;
+    mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;mCurrentHP = a.hp;mHP = a.mhp;
     }
   });
 };
@@ -133,29 +143,29 @@ global.UpdateRoom = function () {
 
 global.Loop = function() {
   mFatigue++;
-  0 === mFatigue % 120 && mPet.speak(mRandom(mIdle));
-  240 == mFatigue && (mClean--, mHunger--, mFatigue = 0, mSave());
-  20 > mHunger && mCall(mRandom(mHungry));
-  20 > mHunger && !mHungry && (mHungry = !0, mCall(mRandom(mHungry)));
+  0 === mFatigue % 120 && mPet.speak(Random(mIdle));
+  240 == mFatigue && (mClean--, mHunger--, mFatigue = 0, Save());
+  20 > mHunger && Call(Random(mHungry));
+  20 > mHunger && !mHungry && (mHungry = !0, Call(Random(mHungry)));
   0 == mHunger && PassOut(hunger);
   4 == mType && mLevel > 0 && mCurrentHP < mHP && mCurrentHP++;
 };
 
-global.mCall = function(a) {
+global.Call = function(a) {
   mPet.pm(a, mOwner)
 };
 
-global.mPM = function(a, b) {
+global.PM = function(a, b) {
   b = b.replace("{username}", mUsers[a]);
   mPet.pm(b, a)
 };
 
-global.mSay = function(a, b) {
+global.Say = function(a, b) {
   b = b.replace("{username}", mUsers[a]);
   mPet.speak(b)
 };
 
-global.mStalk = function(a, b) {
+global.Stalk = function(a, b) {
   if (mStay) return;
   mMoving = setTimeout(function() {
     mPet.stalk(a, function(a) {
@@ -173,9 +183,9 @@ global.LevelUp = function(a) {
     mExp >= mExpReq[i] && (a = i + 1, mLevelUpReq = mExpReq[i+1])
   }
   Log("Pet is Level " + a);
-  a > mLevel && (4 == mType && (mHP += 50), (mCurrentHP = mHP), mSay(mOwner, "I've leveled up! I'm now level " + a + "!"));
+  a > mLevel && (4 == mType && (mHP += 50), (mCurrentHP = mHP), Say(mOwner, "I've leveled up! I'm now level " + a + "!"));
   mLevel = a;
-  mSave()
+  Save()
 };
 
 global.HandleCommand = function(d, b, e) {
@@ -189,7 +199,7 @@ global.HandleCommand = function(d, b, e) {
   }).forEach(function(a) {
     if(!(a.level > mLevel) && !(e && 0 == a.mode)) {
       if("hint" == b || "help" == b) {
-        return mSay(d, a.hint)
+        return Say(d, a.hint)
       }
       a.callback(d, b, e)
     }
@@ -200,7 +210,7 @@ global.PassOut = function(a) {
   Log('Passed out due to ' + a);
   "hunger" == a && (mHungry = false, mHunger = 100);
   mPet.roomRegister(mRoomId);
-  mCall("I've passed out from " + a + "!");
+  Call("I've passed out from " + a + "!");
 };
 
 Log("Hooking Events");

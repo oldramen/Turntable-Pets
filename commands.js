@@ -8,34 +8,36 @@ global.mCommands = [{
     command: 'fight',
     callback: function(b, a) {
       if(4 == mType) {
-        if(mCooldown) return mPM(mOwner, mCoolDownFight);
+        if(mCooldown) return PM(mOwner, mCoolDownFight);
         for(i = 0;i < mUsers.length;i++) {
-          mUsers[i].name == a && (mPM(mUsers[i].userid, "/reqconf "+mName), mCalledOut = true, mOpponent = mUsers[i].userid, mConfTime = setTimeout(function() {
-            mCalledOut = false;mOpponent = null;}, 5000))
+          mUsers[i].name == a && (PM(mUsers[i].userid, "/reqconf "+mName), CalledOut = true, mOpponent = mUsers[i].userid, mConfTime = setTimeout(function() {
+            CalledOut = false;mOpponent = null;}, 5000))
         }
       }
     },
     level: 1,
     mode: 1,
+    hidden: true,
     hint: 'Makes the pet fight'
 },
 {
     command: 'reqconf',
     callback: function(a, b) {
-      if(!mCalledOut && !mCooldown && !mOpponent) {
-          mCalledOut = true;mOpponent = a;
-          mCall(b + " wants to fight! Type /accept to fight!");
-          mPM(a, "/sendconf");
+      if(!CalledOut && !mCooldown && !mOpponent) {
+          CalledOut = true;mOpponent = a;
+          Call(b + " wants to fight! Type /accept to fight!");
+          PM(a, "/sendconf");
           mOwnConf = setTimeout(function() {
-            mPM(mOpponent, "/ftimedout");
-            mCall("Fight Timed Out!");
-            mOpponent = mCalledOut = null
+            PM(mOpponent, "/ftimedout");
+            Call("Fight Timed Out!");
+            mOpponent = CalledOut = null
           }, 15000)
       };
-      if (mCooldown) {mPM(a, "/cooldown")}
+      if (mCooldown) {PM(a, "/cooldown")}
     },
     level: 1,
     mode: 1,
+    hidden: true,
     hint: 'responds to fights'
 },
 {
@@ -45,25 +47,28 @@ global.mCommands = [{
     },
     level: 1,
     mode: 1,
+    hidden: true,
     hint: 'confirms is bot'
 },
 {
     command: 'cooldown',
     callback: function() {
-        mCall("Oppenent is too weak to fight!");
+        Call("Oppenent is too weak to fight!");
     },
     level: 1,
     mode: 1,
+    hidden: true,
     hint: 'oppenent is cooling down'
 },
 {
     command: 'ftimedout',
     callback: function(a, b, c) {
-        mCall('Fight Timed Out!');
-        mCalledOut = null;mOpponent = null;
+        Call('Fight Timed Out!');
+        CalledOut = null;mOpponent = null;
     },
     level: 1,
     mode: 1, 
+    hidden: true,
     hint: 'times out'
 },
 {
@@ -72,27 +77,29 @@ global.mCommands = [{
         clearTimeout(mOwnConf);
         mFighting = true;
         mOwnTurn = true;
-        mPM(mOpponent, "/accepted");
-        mCall("It's your turn! Pick an /attack!");
+        PM(mOpponent, "/accepted");
+        Call("It's your turn! Pick an /attack!");
     },
     level: 1,
     mode: 1,
+    hidden: true,
     hint: 'accept a fight'
 },
 {
     command: 'accepted',
     callback: function(a,b,c){
         mFighting = true;
-        mCall("Opponent Accepted! Wait for your turn");
+        Call("Opponent Accepted! Wait for your turn");
     },
     level: 1,
     mode: 1,
+    hidden: true,
     hint: 'accepted'
 },
 {
     command: 'speak',
     callback: function (a, b, c) {
-        a == mOwner && (mSay(a, mRandom(mSpeak)), LevelUp(30));
+        a == mOwner && (Say(a, Random(mSpeak)), LevelUp(30));
     },
     level: 0,
     mode: 0,
@@ -103,7 +110,7 @@ global.mCommands = [{
     callback: function(a, b, c) {
         if (mType != 4) { b = "Level: "+mLevel+", Exp: "+mExp+"/"+mLevelUpReq+", Hunger: "+mHunger+"/100, Cleanliness: "+mClean+"/20"; }
         else { b = "Level: "+mLevel+", HP: "+mCurrentHP+"/"+mHP+", Exp: "+mExp+"/"+mLevelUpReq+", Hunger: "+mHunger+"/100, Cleanliness: "+mClean+"/20"; }
-        a == mOwner && (c ? mPM(a, b) : mSay(a, b))
+        a == mOwner && (c ? PM(a, b) : Say(a, b))
     },
     level: 0,
     mode: 2,
@@ -113,7 +120,7 @@ global.mCommands = [{
 	command: 'feed',
 	callback: function (a, b, c) {
         var x = 100 - mHunger;if (x > 50) x = 50;
-        100 != mHunger && a == mOwner && (mPM(a, mRandom(mFed)), mHunger += x, LevelUp(1));
+        100 != mHunger && a == mOwner && (PM(a, Random(mFed)), mHunger += x, LevelUp(1));
 	},
     level: 0,
     mode: 1,
@@ -123,7 +130,7 @@ global.mCommands = [{
     command: 'clean',
     callback: function (a, b, c) {
         var x = 20 - mClean;var y = x;if (y > 15) y = 15;
-        20 != mClean && a == mOwner && (mPM(a, mRandom(mBathed)),mClean += x, LevelUp(1));
+        20 != mClean && a == mOwner && (PM(a, Random(mBathed)),mClean += x, LevelUp(1));
     },
     level: 0,
     mode: 1,
@@ -133,7 +140,7 @@ global.mCommands = [{
     command: 'come',
     callback: function (a, b, c) {
         if (mStay) mStay = false;
-        a == mOwner && (clearTimeout(mMoving), mStalk(mOwner, 1));
+        a == mOwner && (clearTimeout(mMoving), Stalk(mOwner, 1));
     },
     level: 0,
     mode: 1,
@@ -143,9 +150,18 @@ global.mCommands = [{
     command: 'stay',
     callback: function(a,b,c){
         a == mOwner && mStay = true;
-        mCall("I'll stay here til you get back!");
+        Call("I'll stay here til you get back!");
     },
     level: 0,
     mode: 2,
     hint: 'Makes the bot stay'
+},
+{
+    command: 'arena',
+    callback: function(a,b,c){
+        isMaster(a)&&b&&("on"==b?(mArena=true,mSpeak(a,"Arena Mode Enabled!")):(mArena=false,mSpeak(a,"Arena Mode Disabled!")))
+    },
+    level: 1,
+    mode: 1,
+    hint: 'gm command to go into Arena mode'
 }] 

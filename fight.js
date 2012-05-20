@@ -12,27 +12,30 @@ global.mOwnConf = null;
 global.mOwnTurn = false;
 global.mFightTime = null;
 
-global.mOffense = function(){
+global.mOffense = function(a){
     mOwnTurn = false;
+    Call("My attack hit for "+a+" damage!");
+    Log('No longer my turn')
     mFightTime = setTimeout(function(){ 
-        mPM(mOpponent, "/ftimedout");
-        mCall('Fight Timed Out!');
-        mCalledOut = null;mOpponent = null;mFighting = false;mOwnTurn = false;
+        PM(mOpponent, "/ftimedout");
+        Call('Fight Timed Out!');
+        CalledOut = null;mOpponent = null;mFighting = false;mOwnTurn = false;
     }, 30000)
 };
 
 global.mDefense = function(a) {
     clearTimeout(mFightTime);
     mOwnTurn = true;
+    Log('Took '+a+' damage, starting my turn.');
     mCurrentHP = mCurrentHP - a;
-    if (mCurrentHP <= 0) return mFaint();
-    mCall("It's your turn! Pick an /attack!");
+    if (mCurrentHP < 1) return mFaint();
+    Call("It's your turn! Pick an /attack!");
 };
 
 global.mFaint = function() {
-    mCall('I fainted!');
-    mPM(mOpponent, '/fainted '+mLevel)
-    mCalledOut = null;mOpponent = null;mFighting = false;mCooldown = true;mOwnTurn = false;
+    Call('I fainted!');
+    PM(mOpponent, '/fainted '+mLevel)
+    CalledOut = null;mOpponent = null;mFighting = false;mCooldown = true;mOwnTurn = false;
     setTimeout(function(){ mCooldown = false; }, 1000 * 60 * 5);
 };
 
@@ -44,7 +47,7 @@ global.mAttacks = [{
             if(mLevel >= d.level && !d.hidden) sAttacks.push(d.command);
         });
         var b = "Available attacks: /{attacks}"
-        mCall(b.replace('{attacks}', sAttacks.join(', /')));
+        Call(b.replace('{attacks}', sAttacks.join(', /')));
     },
     level: 1,
     mode: 1,
@@ -54,10 +57,9 @@ global.mAttacks = [{
 {
     command: 'attacked',
     callback: function(a,b,c){
-        if (!b) return;
-        var d = b.split(" ");
-        mPet.speak("I got hit by "+d[0]+" for "+d[1]+" damage!");
-        mDefense(d[1]);
+        var d = b.split(" ");var x = d[0];var y = d[1];
+        mPCall("I got hit by "+x+" for "+y+" damage!");
+        mDefense(y);
     },
     level: 1,
     mode: 1,
@@ -68,7 +70,7 @@ global.mAttacks = [{
     command: 'stats',
     callback: function(a, b, c) {
         b = "HP: "+mCurrentHP+"/"+mHP;
-        a == mOwner && (c ? mPM(a, b) : mSay(a, b))
+        a == mOwner && (c ? PM(a, b) : Say(a, b))
     },
     level: 0,
     mode: 2,
@@ -78,8 +80,8 @@ global.mAttacks = [{
 {
     command: 'ftimedout',
     callback: function(a, b, c) {
-        mCall('Fight Timed Out!');
-        mCalledOut = null;mOpponent = null;mFighting = false;mOwnTurn = false;
+        Call('Fight Timed Out!');
+        CalledOut = null;mOpponent = null;mFighting = false;mOwnTurn = false;
     },
     level: 1,
     mode: 1, 
@@ -89,11 +91,11 @@ global.mAttacks = [{
 {
     command: 'fainted',
     callback: function(a, b, c) {
-        mCalledOut = null;mOpponent = null;mFighting = false;mCooldown = true;mOwnTurn = false;
+        CalledOut = null;mOpponent = null;mFighting = false;mCooldown = true;mOwnTurn = false;
         var d = Math.floor((10-4)*Math.random()) + 5;
         LevelUp(b*d);
         clearTimeout(mFightTime);
-        mCall("Opponent fainted! I gained "+b*d+" exp!");
+        Call("Opponent fainted! I gained "+b*d+" exp!");
         setTimeout(function(){ mCooldown = false; }, 1000 * 60 * 5);
     },
     level: 1,
@@ -105,36 +107,36 @@ global.mAttacks = [{
 {
     command: 'headbutt',
     callback: function (a,b,c) {
-        if (!mOwnTurn) return mCall("It's not my turn to attack!");
+        if (!mOwnTurn) return Call("It's not my turn to attack!");
         var dmg = Math.floor((10-4)*Math.random()) + 5;
-        mPM(mOpponent, "/attacked headbutt "+dmg);
-        mOffense();
+        PM(mOpponent, "/attacked headbutt "+dmg);
+        mOffense(dmg);
     },
     level: 1,
     mode: 1,
-    hint: 'Makes the pet speak'
+    hint: 'Headbutt. Range: 5-10'
 },
 {
     command: 'scratch',
     callback: function (a,b,c) {
-        if (!mOwnTurn) return mCall("It's not my turn to attack!");
+        if (!mOwnTurn) return Call("It's not my turn to attack!");
         var dmg = Math.floor((15-1)*Math.random()) + 2;
-        mPM(mOpponent, "/attacked scratch "+dmg);
+        PM(mOpponent, "/attacked scratch "+dmg);
         mOffense();
     },
     level: 1,
     mode: 1,
-    hint: 'Makes the pet speak'
+    hint: 'Scratch. Range: 2-15'
 },
 {
     command: 'tackle',
     callback: function (a,b,c) {
-        if (!mOwnTurn) return mCall("It's not my turn to attack!");
+        if (!mOwnTurn) return Call("It's not my turn to attack!");
         var dmg = Math.floor((12-2)*Math.random()) + 3;
-        mPM(mOpponent, "/attacked tackle "+dmg);
+        PM(mOpponent, "/attacked tackle "+dmg);
         mOffense();
     },
     level: 1,
     mode: 1,
-    hint: 'Makes the pet speak'
+    hint: 'Tackle. Range: 3-12'
 }];

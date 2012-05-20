@@ -16,7 +16,7 @@ global.sCommands = [{
     command: 'pet',
     message: ["Oh, a yummy treat. Omnomnom hand.", "Touch me one more time.", "I had a hand for breakfast. Too early for another one."],
     callback: function (a, b) {
-        if (b == '@'+mName) mSay(a, mRandom(this.message));
+        if (aboutMe(b)) Say(a, Random(this.message));
     },
     level: 0,
     mode: 0,
@@ -25,11 +25,11 @@ global.sCommands = [{
 {
     command: 'eat',
     callback: function (a, b) {
-        if (a == mOwner) mSay(a, "/me noms on "+b);
+        if (a == mOwner) Say(a, "/me noms on "+b);
     },
     level: 0,
     mode: 1,
-    hint: 'Pets the dragon'
+    hint: 'The dragon eats'
 }];
 
 mCommands = _.union(mCommands, sCommands);
