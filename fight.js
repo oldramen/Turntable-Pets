@@ -12,7 +12,7 @@ global.mOwnConf = null;
 global.mOwnTurn = false;
 global.mFightTime = null;
 
-global.mOffense = function(a){
+global.Offense = function(a){
     mOwnTurn = false;
     Call("My attack hit for "+a+" damage!");
     Log('No longer my turn')
@@ -23,16 +23,16 @@ global.mOffense = function(a){
     }, 30000)
 };
 
-global.mDefense = function(a) {
+global.Defense = function(a) {
     clearTimeout(mFightTime);
     mOwnTurn = true;
     Log('Took '+a+' damage, starting my turn.');
     mCurrentHP = mCurrentHP - a;
-    if (mCurrentHP < 1) return mFaint();
+    if (mCurrentHP < 1) return Faint();
     Call("It's your turn! Pick an /attack!");
 };
 
-global.mFaint = function() {
+global.Faint = function() {
     Call('I fainted!');
     PM(mOpponent, '/fainted '+mLevel)
     CalledOut = null;mOpponent = null;mFighting = false;mCooldown = true;mOwnTurn = false;
@@ -56,10 +56,8 @@ global.mAttacks = [{
 },
 {
     command: 'attacked',
-    callback: function(a,b,c){
-        var d = b.split(" ");var x = d[0];var y = d[1];
-        mPCall("I got hit by "+x+" for "+y+" damage!");
-        mDefense(y);
+    callback: function(c,d){
+        var a=d.split(" "),b=a[0],a=a[1];mArena?Call("I got hit by "+b+" for "+a+" damage!"):Say(c,"I got hit by "+b+" for "+a+" damage!");Defense(a)
     },
     level: 1,
     mode: 1,
@@ -110,7 +108,7 @@ global.mAttacks = [{
         if (!mOwnTurn) return Call("It's not my turn to attack!");
         var dmg = Math.floor((10-4)*Math.random()) + 5;
         PM(mOpponent, "/attacked headbutt "+dmg);
-        mOffense(dmg);
+        Offense(dmg);
     },
     level: 1,
     mode: 1,
@@ -122,7 +120,7 @@ global.mAttacks = [{
         if (!mOwnTurn) return Call("It's not my turn to attack!");
         var dmg = Math.floor((15-1)*Math.random()) + 2;
         PM(mOpponent, "/attacked scratch "+dmg);
-        mOffense();
+        Offense();
     },
     level: 1,
     mode: 1,
@@ -134,7 +132,7 @@ global.mAttacks = [{
         if (!mOwnTurn) return Call("It's not my turn to attack!");
         var dmg = Math.floor((12-2)*Math.random()) + 3;
         PM(mOpponent, "/attacked tackle "+dmg);
-        mOffense();
+        Offense();
     },
     level: 1,
     mode: 1,
