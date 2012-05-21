@@ -107,6 +107,7 @@ global.Save = function(y, z) {
 global.BootUp = function() {
   mPet.modifyProfile({name:mName});
   mPet.modifyName(mName);
+  mPet.userInfo(function(a){ mName = a.name});
   Stalk(mOwner, 1);
   mHeartBeat = setInterval(function() {
     Loop()
@@ -116,7 +117,7 @@ global.BootUp = function() {
       for(i = 0;i < a.users.length;i++) {
         mUsers.push({userid: a.users[i].userid, name: a.users[i].name});
         Log("Registering " + a.users[i].name);
-      }
+      };
     });
     LevelUp();
   }, 5*1000);
