@@ -86,6 +86,22 @@ global.mCommands = [{
     hint: 'Makes the bot stay'
 },
 {
+    command: 'learn',
+    callback: function(a,b,c) {
+      if(mCanLearn) {
+        if(!b) return Call("What command do you want to learn?");
+        mAttacks.forEach(function(d) {
+          d.command == b && (mLevel >= d.level && !d.hidden) && (mLearned.push(d.command), Call("Learned " + b + "!"), Save())
+        })
+      }
+    },
+    level: 2,
+    mode: 1,
+    hidden: true,
+    owner: true,
+    hint: 'Learn a new attack'
+},
+{
     command: 'arena',
     callback: function(a,b,c){
         isMaster(a)&&b&&("on"==b?(mArena=true,mSpeak(a,"Arena Mode Enabled!")):(mArena=false,mSpeak(a,"Arena Mode Disabled!")))

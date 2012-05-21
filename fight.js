@@ -59,22 +59,6 @@ global.mAttacks = [{
     hint: 'shows possible attacks'
 },
 {
-    command: 'learn',
-    callback: function(a,b,c) {
-      if(mCanLearn) {
-        if(!b) return Call("What command do you want to learn?");
-        mAttacks.forEach(function(d) {
-          d.command == b && (mLevel >= d.level && !d.hidden) && (mLearned.push(d.command), Call("Learned " + b + "!"), Save())
-        })
-      }
-    },
-    level: 2,
-    mode: 1,
-    hidden: true,
-    owner: true,
-    hint: 'Learn a new attack'
-},
-{
     command: 'attacked',
     callback: function(c,d){
         var a=d.split(" "),b=a[0],a=a[1];mArena?Say("I got hit by "+b+" for "+a+" damage!"):Call(c,"I got hit by "+b+" for "+a+" damage!");Defense(a)

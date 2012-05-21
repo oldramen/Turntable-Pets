@@ -87,6 +87,13 @@ global.aboutMe = function(a){
   return false;
 };
 
+global.isLearned = function(a){
+  var b = ['attacked', 'stats', 'ftimedout', 'fainted'];
+  if (mLearned.indexOf(a) != -1) return true;
+  if (b.indexOf(a) != -1) return true;
+  return false;
+};
+
 global.Random = function(a) {
   return a[Math.floor(Math.random() * a.length)]
 };
@@ -229,7 +236,7 @@ global.HandleCommand = function(d, c, f) {
       return b.command && b.command == e || "object" == typeof b.command && b.command.length && -1 != b.command.indexOf(e)
     }).forEach(function(b) {
       if("hint" == c || "help" == c) { return Say(d, b.hint) }
-      mLevel >= b.level && d == mOwner && -1 != mLearned.indexOf(b.command) && b.callback(d, c, f)
+      mLevel >= b.level && (isLearned(b.command)) && b.callback(d, c, f)
     }) : mCommands.filter(function(b) {
       return b.command && b.command == e || "object" == typeof b.command && b.command.length && -1 != b.command.indexOf(e)
     }).forEach(function(b) {
