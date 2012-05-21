@@ -24,10 +24,11 @@ global.sCommands = [{
 {
     command: 'eat',
     callback: function (a, b) {
-        if (a == mOwner) Say(a, "/me quietly chews on "+b);
+        Say(a, "/me quietly chews on "+b);
     },
     level: 0,
     mode: 1,
+    owner: true,
     hint: 'the cat eats'
 }];
 

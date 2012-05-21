@@ -11,6 +11,7 @@ global.mConfTime = null;
 global.mOwnConf = null;
 global.mOwnTurn = false;
 global.mFightTime = null;
+global.mCanLearn = false;
 
 global.Offense = function(a){
     mOwnTurn = false;
@@ -54,7 +55,24 @@ global.mAttacks = [{
     level: 1,
     mode: 1,
     hidden: true,
+    owner: true,
     hint: 'shows possible attacks'
+},
+{
+    command: 'learn',
+    callback: function(a,b,c) {
+      if(mCanLearn) {
+        if(!b) return Call("What command do you want to learn?");
+        mAttacks.forEach(function(d) {
+          d.command == b && (mLevel >= d.level && !d.hidden) && (mLearned.push(d.command), Call("Learned " + b + "!"), Save())
+        })
+      }
+    },
+    level: 2,
+    mode: 1,
+    hidden: true,
+    owner: true,
+    hint: 'Learn a new attack'
 },
 {
     command: 'attacked',

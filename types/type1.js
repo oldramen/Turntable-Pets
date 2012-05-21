@@ -24,11 +24,12 @@ global.sCommands = [{
 {
     command: 'eat',
     callback: function (a, b) {
-        if (a == mOwner) Say(a, "/me chows down on "+b);
+        Say(a, "/me chows down on "+b);
     },
     level: 0,
     mode: 1,
-    hint: 'Pets the dog'
+    owner: true,
+    hint: 'the dog eats'
 }];
 
 mCommands = _.union(mCommands, sCommands);

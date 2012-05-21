@@ -9,14 +9,14 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4fb42b96df5bcf5587292adc";
-global.mDBName = 'fight7';
+global.mDBName = 'fight8';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
 global._ = require("underscore");
 global.mCommandsMod = require("./commands.js");
 global.mTypeCommands = require("./types/type"+mType+".js");
-if (mType == 4) require("./fight.js");
+if (mType > 3) require("./fight.js");
 
 Log("Connecting to couchdb");
 global.nano = require('nano')('http://localhost:5984');
@@ -49,6 +49,7 @@ global.mCurrentHP = mHP;
 global.mStay = false;
 global.mUsers = [];
 global.gameMasters = ['4e0ff328a3f751670a084ba6'];
+global.mLearned = ['headbutt', 'scratch', 'tackle'];
 
 global.OnRegistered = function(a) {
   if(a.user[0].userid == mUserId) {
@@ -95,7 +96,7 @@ global.Save = function(y, z) {
     if(!y || !z) {
       a.name = mName, a.type = mType, a.exp = mExp, a.hunger = mHunger,
       a.level = mLevel, a.clean = mClean, a.hp = mCurrentHP, a.mhp = mHP,
-      a.wins = 0, a.losses = 0
+      a.wins = mWins, a.losses = mLosses, a.learned = mLearned
     }
     y && z && (eval("a." + y + " = " + z), Log(a.y + " = " + z));
     store.insert(a, function(a) { if(a) { return console.log(a) }
@@ -128,7 +129,8 @@ global.BootUp = function() {
       Log("Pet Created");
     })}else { if(b) { return console.log(b) }
     Log("Connected to doc:");console.log(a);
-    mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;mCurrentHP = a.hp;mHP = a.mhp;mWins = a.wins;mLosses = a.losses;
+    mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;mCurrentHP = a.hp;
+    mHP = a.mhp;mWins = a.wins;mLosses = a.losses;mLearned = a.learned;
     }
   });
 };
@@ -151,7 +153,7 @@ global.Loop = function() {
   20 > mHunger && Call(Random(mHungry));
   20 > mHunger && !mHungry && (mHungry = !0, Call(Random(mHungry)));
   0 == mHunger && PassOut(hunger);
-  4 == mType && mLevel > 0 && mCurrentHP < mHP && mCurrentHP++;
+  3 < mType && mLevel > 0 && mCurrentHP < mHP && mCurrentHP++;
 };
 
 global.Call = function(a) {
@@ -186,27 +188,55 @@ global.LevelUp = function(a) {
     mExp >= mExpReq[i] && (a = i + 1, mLevelUpReq = mExpReq[i+1])
   }
   Log("Pet is Level " + a);
-  a > mLevel && (4 == mType && (mHP += 50), (mCurrentHP = mHP), Say(mOwner, "I've leveled up! I'm now level " + a + "!"));
-  mLevel = a;
+  if (a > mLevel) {
+    if (mType > 3) { 
+      mHP += 50;
+      mCurrentHP = mHP;
+    }
+    Say(mOwner, "I've leveled up! I'm now level " + a + "!"); 
+    getNewCommands(a, mType);
+    mLevel = a;
+  }
   Save()
 };
 
-global.HandleCommand = function(d, b, e) {
-  var f = b.split(" "), c = f.shift().replace(/^[!\*\/]/, ""), b = f.join(" ");
-  mFighting ? mAttacks.filter(function(a) {
-    return a.command && a.command == c || "object" == typeof a.command && a.command.length && -1 != a.command.indexOf(c)
-  }).forEach(function(a) {
-    a.level > mLevel || a.callback(d, b, e)
-  }) : mCommands.filter(function(a) {
-    return a.command && a.command == c || "object" == typeof a.command && a.command.length && -1 != a.command.indexOf(c)
-  }).forEach(function(a) {
-    if(!(a.level > mLevel) && !(e && 0 == a.mode)) {
-      if("hint" == b || "help" == b) {
-        return Say(d, a.hint)
-      }
-      a.callback(d, b, e)
+global.getNewCommands = function(a, b){
+  var sCmds = [];
+  mCommands.forEach(function (d) {
+      if(a == d.level && !d.hidden) sCmds.push(d.command);
+  });
+  if (sCmds.length > 0) {
+    var b = "New Actions: /{cmds}"
+    Call(b.replace('{cmds}', sCmds.join(', /')));
+  }
+  if (b == 4){
+    var sAttacks = [];
+    mAttacks.forEach(function (d) {
+        if(a == d.level && !d.hidden) sAttacks.push(d.command);
+    });
+    if (sAttacks.length > 0) {
+      var b = "Pick a new attack to learn with /learn (attack): /{attacks}"
+      Call(b.replace('{attacks}', sAttacks.join(', /')));
+      mCanLearn = true;
     }
-  })
+  }
+};
+
+global.HandleCommand = function(d, c, f) {
+  if(c.match(/^[!\*\/]/)) {
+    var g = c.split(" "), e = g.shift().replace(/^[!\*\/]/, "").toLowerCase(), c = g.join(" ");
+    mFighting ? mAttacks.filter(function(b) {
+      return b.command && b.command == e || "object" == typeof b.command && b.command.length && -1 != b.command.indexOf(e)
+    }).forEach(function(b) {
+      if("hint" == c || "help" == c) { return Say(d, b.hint) }
+      mLevel >= b.level && d == mOwner && -1 != mLearned.indexOf(b.command) && b.callback(d, c, f)
+    }) : mCommands.filter(function(b) {
+      return b.command && b.command == e || "object" == typeof b.command && b.command.length && -1 != b.command.indexOf(e)
+    }).forEach(function(b) {
+      if("hint" == c || "help" == c) { return Say(d, b.hint) }
+      mLevel >= b.level && !(f && 0 == b.mode) && !(b.owner && d != mOwner) && b.callback(d, c, f)
+    })
+  }
 };
 
 global.PassOut = function(a) {
