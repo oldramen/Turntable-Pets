@@ -59,7 +59,7 @@ global.mAttacks = [{
 {
     command: 'attacked',
     callback: function(c,d){
-        var a=d.split(" "),b=a[0],a=a[1];mArena?Call("I got hit by "+b+" for "+a+" damage!"):Say(c,"I got hit by "+b+" for "+a+" damage!");Defense(a)
+        var a=d.split(" "),b=a[0],a=a[1];mArena?Say("I got hit by "+b+" for "+a+" damage!"):Call(c,"I got hit by "+b+" for "+a+" damage!");Defense(a)
     },
     level: 1,
     mode: 1,
@@ -122,7 +122,7 @@ global.mAttacks = [{
         if (!mOwnTurn) return Call("It's not my turn to attack!");
         var dmg = Math.floor((15-1)*Math.random()) + 2;
         PM(mOpponent, "/attacked scratch "+dmg);
-        Offense();
+        Offense(dmg);
     },
     level: 1,
     mode: 1,
@@ -134,7 +134,7 @@ global.mAttacks = [{
         if (!mOwnTurn) return Call("It's not my turn to attack!");
         var dmg = Math.floor((12-2)*Math.random()) + 3;
         PM(mOpponent, "/attacked tackle "+dmg);
-        Offense();
+        Offense(dmg);
     },
     level: 1,
     mode: 1,
