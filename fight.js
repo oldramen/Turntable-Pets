@@ -61,7 +61,7 @@ global.mAttacks = [{
 {
     command: 'attacked',
     callback: function(c,d){
-        var a=d.split(" "),b=a[0],a=a[1];mArena?Say("I got hit by "+b+" for "+a+" damage!"):Call(c,"I got hit by "+b+" for "+a+" damage!");Defense(a)
+        var a=d.split(" "),b=a[0],a=a[1];mArena?Say("I got hit by "+b+" for "+a+" damage!"):Call("I got hit by "+b+" for "+a+" damage!");Defense(a)
     },
     level: 1,
     mode: 1,
