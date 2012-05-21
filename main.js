@@ -9,7 +9,7 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4fb42b96df5bcf5587292adc";
-global.mDBName = 'fight6';
+global.mDBName = 'fight7';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
@@ -183,8 +183,8 @@ global.LevelUp = function(a) {
   a && (mExp += a, Log("Gained " + a + " EXP, Total: " + mExp));
   for(i = a = 0;i < mExpReq.length;i++) {
     mExp >= mExpReq[i] && (a = i + 1, mLevelUpReq = mExpReq[i+1])
-    Log("Pet is Level " + a);
   }
+  Log("Pet is Level " + a);
   a > mLevel && (4 == mType && (mHP += 50), (mCurrentHP = mHP), Say(mOwner, "I've leveled up! I'm now level " + a + "!"));
   mLevel = a;
   Save()
