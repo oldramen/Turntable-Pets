@@ -11,7 +11,7 @@ global.mFed = ["I love you so much", "haha my belly is bulging xD", "Man that wa
 global.mBathed = ["I require a dust bath."];
 global.mIdle = ["/me curls up in a ball", "/me runs on my hamster wheel", "squeak.", "I. need. exercize!"];
 
-global.sCommands = [{
+var sCommands = [{
     command: 'pet',
     message: ["^-^ Thank youuuuu :D", "<3", ":hamster: (happy)", "/me bites hand (don't sneak up on me like that!)"],
     callback: function (a, b) {

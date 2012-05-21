@@ -12,7 +12,7 @@ global.mBathed = ["B'awww, I hate baths!", "Try that one more time, and I'll kil
 global.mIdle = ["/me stretches wings", "/me yawns", "rawr.", "brawr!"];
 global.mCoolDownFight = "Sorry, I can't fight yet. Let me rest for a bit.";
 
-global.sCommands = [{
+var sCommands = [{
     command: 'pet',
     message: ["Oh, a yummy treat. Omnomnom hand.", "Touch me one more time.", "I had a hand for breakfast. Too early for another one."],
     callback: function (a, b) {
@@ -31,98 +31,34 @@ global.sCommands = [{
     mode: 1,
     owner: true,
     hint: 'The dragon eats'
-},
-{
-    command: 'fight',
-    callback: function(b, a) {
-      if(4 == mType) {
-        if(mCooldown) return PM(mOwner, mCoolDownFight);
-        for(i = 0;i < mUsers.length;i++) {
-          mUsers[i].name == a && (PM(mUsers[i].userid, "/reqconf "+mName), CalledOut = true, mOpponent = mUsers[i].userid, mConfTime = setTimeout(function() {
-            CalledOut = false;mOpponent = null;}, 5000))
-        }
-      }
-    },
-    level: 1,
-    mode: 1,
-    hidden: true,
-    hint: 'Makes the pet fight'
-},
-{
-    command: 'reqconf',
-    callback: function(a, b) {
-      if(!CalledOut && !mCooldown && !mOpponent) {
-          CalledOut = true;mOpponent = a;
-          Call(b + " wants to fight! Type /accept to fight!");
-          PM(a, "/sendconf");
-          mOwnConf = setTimeout(function() {
-            PM(mOpponent, "/ftimedout");
-            Call("Fight Timed Out!");
-            mOpponent = CalledOut = null
-          }, 15000)
-      };
-      if (mCooldown) {PM(a, "/cooldown")}
-    },
-    level: 1,
-    mode: 1,
-    hidden: true,
-    hint: 'responds to fights'
-},
-{
-    command: 'sendconf',
-    callback: function(a,b,c){
-        if (a == mOpponent) clearTimeout(mConfTime);
-    },
-    level: 1,
-    mode: 1,
-    hidden: true,
-    hint: 'confirms is bot'
-},
-{
-    command: 'cooldown',
-    callback: function() {
-        Call("Oppenent is too weak to fight!");
-    },
-    level: 1,
-    mode: 1,
-    hidden: true,
-    hint: 'oppenent is cooling down'
-},
-{
-    command: 'ftimedout',
-    callback: function(a, b, c) {
-        Call('Fight Timed Out!');
-        CalledOut = null;mOpponent = null;
-    },
-    level: 1,
-    mode: 1, 
-    hidden: true,
-    hint: 'times out'
-},
-{
-    command: 'accept',
-    callback: function(a,b,c){
-        clearTimeout(mOwnConf);
-        mFighting = true;
-        mOwnTurn = true;
-        PM(mOpponent, "/accepted");
-        Call("It's your turn! Pick an /attack!");
-    },
-    level: 1,
-    mode: 1,
-    hidden: true,
-    hint: 'accept a fight'
-},
-{
-    command: 'accepted',
-    callback: function(a,b,c){
-        mFighting = true;
-        Call("Opponent Accepted! Wait for your turn");
-    },
-    level: 1,
-    mode: 1,
-    hidden: true,
-    hint: 'accepted'
 }];
 
+var dAttacks = [{
+    command: 'fireball',
+    callback: function (a,b,c) {
+        if (!mOwnTurn) return Call("It's not my turn to attack!");
+        var dmg = Damage(this.min, this.max);
+        PM(mOpponent, "/attacked fireball "+dmg);
+        Offense(dmg);
+    },
+    level: 2,
+    min: 10,
+    max: 30,
+    hint: 'Fireball. Range: 10 - 30'
+},
+{
+    command: 'scorch',
+    callback: function (a,b,c) {
+        if (!mOwnTurn) return Call("It's not my turn to attack!");
+        var dmg = Damage(this.min, this.max);
+        PM(mOpponent, "/attacked scorch "+dmg);
+        Offense(dmg);
+    },
+    level: 2,
+    min: 5,
+    max: 35,
+    hint: 'Scorch. Range: 5 - 35'
+}]
+
 mCommands = _.union(mCommands, sCommands);
+mAttacks = _.union(mAttacks, dAttacks);

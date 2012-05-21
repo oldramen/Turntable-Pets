@@ -9,14 +9,15 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4fb42b96df5bcf5587292adc";
-global.mDBName = 'fight8';
+global.mDBName = 'fight12';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
 global._ = require("underscore");
 global.mCommandsMod = require("./commands.js");
-global.mTypeCommands = require("./types/type"+mType+".js");
 if (mType > 3) require("./fight.js");
+global.mTypeCommands = require("./types/type"+mType+".js");
+
 
 Log("Connecting to couchdb");
 global.nano = require('nano')('http://localhost:5984');
@@ -216,14 +217,17 @@ global.getNewCommands = function(a, b){
     var b = "New Actions: /{cmds}"
     Call(b.replace('{cmds}', sCmds.join(', /')));
   }
-  if (b == 4){
-    var sAttacks = [];
+  if (b > 3 && mLevel > 1){
+    var newAttacks = [];
     mAttacks.forEach(function (d) {
-        if(a == d.level && !d.hidden) sAttacks.push(d.command);
+        if(a == d.level && !d.hidden) {
+          newAttacks.push(d.command);
+          console.log(d.command);
+        }
     });
-    if (sAttacks.length > 0) {
-      var b = "Pick a new attack to learn with /learn (attack): /{attacks}"
-      Call(b.replace('{attacks}', sAttacks.join(', /')));
+    if (newAttacks.length > 0) {
+      var b = "Pick a new attack to learn with /learn (attack): {attacks}"
+      Call(b.replace('{attacks}', newAttacks.join(', ')));
       mCanLearn = true;
     }
   }

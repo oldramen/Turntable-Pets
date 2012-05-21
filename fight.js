@@ -33,6 +33,10 @@ global.Defense = function(a) {
     Call("It's your turn! Pick an /attack!");
 };
 
+global.Damage = function(a, b) {
+    return Math.floor((b - (a - 1)) * Math.random()) + a
+};
+
 global.Faint = function() {
     Call('I fainted!');
     PM(mOpponent, '/fainted '+mLevel)
@@ -42,15 +46,106 @@ global.Faint = function() {
     setTimeout(function(){ mCooldown = false; }, 1000 * 60 * 5);
 };
 
+var fCommands = [{
+    command: 'fight',
+    callback: function(b, a) {
+      if(4 == mType) {
+        if(mCooldown) return PM(mOwner, mCoolDownFight);
+        for(i = 0;i < mUsers.length;i++) {
+          mUsers[i].name == a && (PM(mUsers[i].userid, "/reqconf "+mName), CalledOut = true, mOpponent = mUsers[i].userid, mConfTime = setTimeout(function() {
+            CalledOut = false;mOpponent = null;}, 5000))
+        }
+      }
+    },
+    level: 1,
+    mode: 1,
+    hidden: true,
+    hint: 'Makes the pet fight'
+},
+{
+    command: 'reqconf',
+    callback: function(a, b) {
+      if(!CalledOut && !mCooldown && !mOpponent) {
+          CalledOut = true;mOpponent = a;
+          Call(b + " wants to fight! Type /accept to fight!");
+          PM(a, "/sendconf");
+          mOwnConf = setTimeout(function() {
+            PM(mOpponent, "/ftimedout");
+            Call("Fight Timed Out!");
+            mOpponent = CalledOut = null
+          }, 15000)
+      };
+      if (mCooldown) {PM(a, "/cooldown")}
+    },
+    level: 1,
+    mode: 1,
+    hidden: true,
+    hint: 'responds to fights'
+},
+{
+    command: 'sendconf',
+    callback: function(a,b,c){
+        if (a == mOpponent) clearTimeout(mConfTime);
+    },
+    level: 1,
+    mode: 1,
+    hidden: true,
+    hint: 'confirms is bot'
+},
+{
+    command: 'cooldown',
+    callback: function() {
+        Call("Oppenent is too weak to fight!");
+    },
+    level: 1,
+    mode: 1,
+    hidden: true,
+    hint: 'oppenent is cooling down'
+},
+{
+    command: 'ftimedout',
+    callback: function(a, b, c) {
+        Call('Fight Timed Out!');
+        CalledOut = null;mOpponent = null;
+    },
+    level: 1,
+    mode: 1, 
+    hidden: true,
+    hint: 'times out'
+},
+{
+    command: 'accept',
+    callback: function(a,b,c){
+        clearTimeout(mOwnConf);
+        mFighting = true;
+        mOwnTurn = true;
+        PM(mOpponent, "/accepted");
+        Call("It's your turn! Pick an /attack!");
+    },
+    level: 1,
+    mode: 1,
+    hidden: true,
+    hint: 'accept a fight'
+},
+{
+    command: 'accepted',
+    callback: function(a,b,c){
+        mFighting = true;
+        Call("Opponent Accepted! Wait for your turn");
+    },
+    level: 1,
+    mode: 1,
+    hidden: true,
+    hint: 'accepted'
+}];
+
+mCommands = _.union(mCommands, fCommands);
+
 global.mAttacks = [{
     command: 'attack',
     callback:function(a,b,c){
-        var sAttacks = [];
-        mAttacks.forEach(function (d) {
-            if(mLevel >= d.level && !d.hidden) sAttacks.push(d.command);
-        });
         var b = "Available attacks: /{attacks}"
-        Call(b.replace('{attacks}', sAttacks.join(', /')));
+        Call(b.replace('{attacks}', mLearned.join(', ')));
     },
     level: 1,
     mode: 1,
@@ -110,35 +205,38 @@ global.mAttacks = [{
     command: 'headbutt',
     callback: function (a,b,c) {
         if (!mOwnTurn) return Call("It's not my turn to attack!");
-        var dmg = Math.floor((10-4)*Math.random()) + 5;
+        var dmg = Damage(this.min, this.max);
         PM(mOpponent, "/attacked headbutt "+dmg);
         Offense(dmg);
     },
     level: 1,
-    mode: 1,
+    min: 5,
+    max: 10,
     hint: 'Headbutt. Range: 5-10'
 },
 {
     command: 'scratch',
     callback: function (a,b,c) {
         if (!mOwnTurn) return Call("It's not my turn to attack!");
-        var dmg = Math.floor((15-1)*Math.random()) + 2;
+        var dmg = Damage(this.min, this.max);
         PM(mOpponent, "/attacked scratch "+dmg);
         Offense(dmg);
     },
     level: 1,
-    mode: 1,
+    min: 2,
+    max: 15,
     hint: 'Scratch. Range: 2-15'
 },
 {
     command: 'tackle',
     callback: function (a,b,c) {
         if (!mOwnTurn) return Call("It's not my turn to attack!");
-        var dmg = Math.floor((12-2)*Math.random()) + 3;
+        var dmg = Damage(this.min, this.max);
         PM(mOpponent, "/attacked tackle "+dmg);
         Offense(dmg);
     },
     level: 1,
-    mode: 1,
+    min: 3,
+    max: 12,
     hint: 'Tackle. Range: 3-12'
 }];

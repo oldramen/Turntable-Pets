@@ -11,7 +11,7 @@ global.mFed = ["That tasted way better than i thought it would!", "yumm :)", "I 
 global.mBathed = ["I'm to busy for a bat-SQUIRREL"];
 global.mIdle = ["/me stretches and lays down", "/me howls", "Bark.", "i'mmmm sllleeeeeepppppy *yawns*"];
 
-global.sCommands = [{
+var sCommands = [{
     command: 'pet',
     message: ["^-^ Thank youuuuu :D", "<3", "/me howls (happy)", "/me bites hand (don't sneak up on me like that!)"],
     callback: function (a, b) {
