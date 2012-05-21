@@ -35,6 +35,8 @@ global.Defense = function(a) {
 global.Faint = function() {
     Call('I fainted!');
     PM(mOpponent, '/fainted '+mLevel)
+    mLosses++;
+    Save();
     CalledOut = null;mOpponent = null;mFighting = false;mCooldown = true;mOwnTurn = false;
     setTimeout(function(){ mCooldown = false; }, 1000 * 60 * 5);
 };

@@ -38,6 +38,8 @@ global.mFatigue = 0;
 global.mMoving = null;
 global.mArena = null;
 global.mFighting = false;
+global.mWins = 0;
+global.mLosses = 0;
 global.CalledOut = false;
 global.mBooted = false;
 global.mHungry = false;
@@ -95,7 +97,7 @@ global.Save = function(y, z) {
       a.level = mLevel, a.clean = mClean, a.hp = mCurrentHP, a.mhp = mHP,
       a.wins = 0, a.losses = 0
     }
-    y && z && (a.y = z);
+    y && z && (eval("a." + y + " = " + z), Log(a.y + " = " + z));
     store.insert(a, function(a) { if(a) { return console.log(a) }
       Log("Pet Saved");
     })
@@ -125,7 +127,7 @@ global.BootUp = function() {
       Log("Pet Created");
     })}else { if(b) { return console.log(b) }
     Log("Connected to doc:");console.log(a);
-    mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;mCurrentHP = a.hp;mHP = a.mhp;
+    mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;mCurrentHP = a.hp;mHP = a.mhp;mWins = a.wins;mLosses = a.losses;
     }
   });
 };
@@ -181,8 +183,8 @@ global.LevelUp = function(a) {
   a && (mExp += a, Log("Gained " + a + " EXP, Total: " + mExp));
   for(i = a = 0;i < mExpReq.length;i++) {
     mExp >= mExpReq[i] && (a = i + 1, mLevelUpReq = mExpReq[i+1])
+    Log("Pet is Level " + a);
   }
-  Log("Pet is Level " + a);
   a > mLevel && (4 == mType && (mHP += 50), (mCurrentHP = mHP), Say(mOwner, "I've leveled up! I'm now level " + a + "!"));
   mLevel = a;
   Save()
