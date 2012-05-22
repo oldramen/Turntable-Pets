@@ -9,7 +9,7 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4fb42b96df5bcf5587292adc";
-global.mDBName = 'fight12';
+global.mDBName = 'fight16';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
@@ -23,7 +23,7 @@ Log("Connecting to couchdb");
 global.nano = require('nano')('http://localhost:5984');
 
 Log("Finding database");
-nano.db.create(mDBName, function(a) { a ? Log("db found, connecting") : Log("db not found, creating")});
+nano.db.create(mDBName, function(a) { a ? Log("Db found, connecting") : Log("Db not found, creating")});
 
 global.store = nano.use(mDBName);
 
@@ -208,28 +208,18 @@ global.LevelUp = function(a) {
   Save()
 };
 
-global.getNewCommands = function(a, b){
-  var sCmds = [];
-  mCommands.forEach(function (d) {
-      if(a == d.level && !d.hidden) sCmds.push(d.command);
+global.getNewCommands = function(b, e) {
+  var c = [];
+  mCommands.forEach(function(a) {
+    b == a.level && !a.hidden && c.push(a.command)
   });
-  if (sCmds.length > 0) {
-    var b = "New Actions: /{cmds}"
-    Call(b.replace('{cmds}', sCmds.join(', /')));
-  }
-  if (b > 3 && mLevel > 1){
-    var newAttacks = [];
-    mAttacks.forEach(function (d) {
-        if(a == d.level && !d.hidden) {
-          newAttacks.push(d.command);
-          console.log(d.command);
-        }
+  0 < c.length && Call("New Actions: /{cmds}".replace("{cmds}", c.join(", /")));
+  if(3 < e && 1 < b) {
+    var d = [];
+    mAttacks.forEach(function(a) {
+      b == a.level && !a.hidden && (d.push(a.command), console.log(a.command))
     });
-    if (newAttacks.length > 0) {
-      var b = "Pick a new attack to learn with /learn (attack): {attacks}"
-      Call(b.replace('{attacks}', newAttacks.join(', ')));
-      mCanLearn = true;
-    }
+    0 < d.length && (Call("Pick a new attack to learn with /learn: {attacks}".replace("{attacks}", d.join(", "))), mCanLearn = true)
   }
 };
 

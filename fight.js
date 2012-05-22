@@ -2,10 +2,10 @@
  * @copyright 2012 yayramen. 
  * @author yayramen
  * @description This is where the battle functions will be held.
- * @Type: Dragon
  */
 
 global.mOpponent = null;
+global.mOpHealth = null;
 global.mCooldown = false;
 global.mConfTime = null;
 global.mOwnConf = null;
@@ -15,21 +15,22 @@ global.mCanLearn = false;
 
 global.Offense = function(a){
     mOwnTurn = false;
-    Call("My attack hit for "+a+" damage!");
-    Log('No longer my turn')
+    var b = mOpHealth - a;
+    Call("My attack hit for "+a+" damage! Opponent at "+b+" HP!");
     mFightTime = setTimeout(function(){ 
         PM(mOpponent, "/ftimedout");
         Call('Fight Timed Out!');
-        CalledOut = null;mOpponent = null;mFighting = false;mOwnTurn = false;
+        CalledOut = mOpponent = mOpHealth = null;mFighting = mOwnTurn = false;
     }, 30000)
 };
 
-global.Defense = function(a) {
+global.Defense = function(a, b) {
     clearTimeout(mFightTime);
     mOwnTurn = true;
-    Log('Took '+a+' damage, starting my turn.');
-    mCurrentHP = mCurrentHP - a;
+    mCurrentHP = mCurrentHP - a;;
     if (mCurrentHP < 1) return Faint();
+    var e = "I got hit by "+b+" for "+a+" damage! Now at "+mCurrentHP+" HP!";
+    mArena?Say(e):Call(e);
     Call("It's your turn! Pick an /attack!");
 };
 
@@ -40,9 +41,9 @@ global.Damage = function(a, b) {
 global.Faint = function() {
     Call('I fainted!');
     PM(mOpponent, '/fainted '+mLevel)
-    mLosses++;
+    mLosses++;mCurrentHP = mHP / 10;
     Save();
-    CalledOut = null;mOpponent = null;mFighting = false;mCooldown = true;mOwnTurn = false;
+    CalledOut = mOpponent = mOpHealth = null;mFighting = mOwnTurn = false;
     setTimeout(function(){ mCooldown = false; }, 1000 * 60 * 5);
 };
 
@@ -52,7 +53,7 @@ var fCommands = [{
       if(4 == mType) {
         if(mCooldown) return PM(mOwner, mCoolDownFight);
         for(i = 0;i < mUsers.length;i++) {
-          mUsers[i].name == a && (PM(mUsers[i].userid, "/reqconf "+mName), CalledOut = true, mOpponent = mUsers[i].userid, mConfTime = setTimeout(function() {
+          mUsers[i].name == a && (PM(mUsers[i].userid, "/reqconf "+mCurrentHP+" "+mName), CalledOut = true, mOpponent = mUsers[i].userid, mConfTime = setTimeout(function() {
             CalledOut = false;mOpponent = null;}, 5000))
         }
       }
@@ -67,6 +68,8 @@ var fCommands = [{
     callback: function(a, b) {
       if(!CalledOut && !mCooldown && !mOpponent) {
           CalledOut = true;mOpponent = a;
+          var c=b.split(" ");var d = c.shift();b = c.join(' ');
+          mOpHealth = d;
           Call(b + " wants to fight! Type /accept to fight!");
           PM(a, "/sendconf");
           mOwnConf = setTimeout(function() {
@@ -106,7 +109,7 @@ var fCommands = [{
     command: 'ftimedout',
     callback: function(a, b, c) {
         Call('Fight Timed Out!');
-        CalledOut = null;mOpponent = null;
+        CalledOut = mOpponent = mOpHealth = null;mFighting = mOwnTurn = false;
     },
     level: 1,
     mode: 1, 
@@ -156,7 +159,8 @@ global.mAttacks = [{
 {
     command: 'attacked',
     callback: function(c,d){
-        var a=d.split(" "),b=a[0],a=a[1];mArena?Say("I got hit by "+b+" for "+a+" damage!"):Call("I got hit by "+b+" for "+a+" damage!");Defense(a)
+        var a=d.split(" "),b=a[0],a=a[1];
+        Defense(a, b)
     },
     level: 1,
     mode: 1,
@@ -178,7 +182,7 @@ global.mAttacks = [{
     command: 'ftimedout',
     callback: function(a, b, c) {
         Call('Fight Timed Out!');
-        CalledOut = null;mOpponent = null;mFighting = false;mOwnTurn = false;
+        CalledOut = mOpponent = mOpHealth = null;mFighting = mOwnTurn = false;
     },
     level: 1,
     mode: 1, 

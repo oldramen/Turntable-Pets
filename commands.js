@@ -22,7 +22,7 @@ global.mCommands = [{
 {
     command: 'speak',
     callback: function (a, b, c) {
-        Say(a, Random(mSpeak)), LevelUp(30);
+        Say(a, Random(mSpeak)), LevelUp(50);
     },
     level: 0,
     mode: 0,
@@ -87,12 +87,13 @@ global.mCommands = [{
 },
 {
     command: 'learn',
-    callback: function(a,b,c) {
+    callback: function(c, a) {
       if(mCanLearn) {
-        if(!b) return Call("What command do you want to learn?");
-        mAttacks.forEach(function(d) {
-          d.command == b && (mLevel >= d.level && !d.hidden) && (mLearned.push(d.command), Call("Learned " + b + "!"), Save())
-        })
+        if(!a) return Call("Use /learn attack - where attack is the attack you want to learn!");
+        mAttacks.forEach(function(b) {
+          b.command == a && (mLevel == b.level && !b.hidden && -1 == mLearned.indexOf(a)) && (mLearned.push(b.command), Call("Learned " + a + "!"), Save())
+        });
+        mCanLearn = false;
       }
     },
     level: 2,
