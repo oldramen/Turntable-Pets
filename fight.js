@@ -31,7 +31,7 @@ global.Defense = function(a, b) {
     mCurrentHP = mCurrentHP - a;;
     if (mCurrentHP < 1) return Faint();
     var e = "I got hit by "+b+" for "+a+" damage! Now at "+mCurrentHP+" HP!";
-    mArena?Say(e):Call(e);
+    mArena?Say(mOwner, e):Call(e);
     Call("It's your turn! Use a /potion, or pick an /attack!");
 };
 
@@ -72,7 +72,7 @@ var fCommands = [{
           var c=b.split(" ");var d = c.shift();b = c.join(' ');
           mOpHealth = d;
           Call(b + " wants to fight! Type /accept to fight!");
-          PM(a, "/sendconf");
+          PM(a, "/sendconf "+mCurrentHP);
           mOwnConf = setTimeout(function() {
             PM(mOpponent, "/ftimedout");
             Call("Fight Timed Out!");
@@ -90,6 +90,7 @@ var fCommands = [{
     command: 'sendconf',
     callback: function(a,b,c){
         if (a == mOpponent) clearTimeout(mConfTime);
+        mOpHealth = b;
     },
     level: 1,
     mode: 1,
@@ -149,7 +150,7 @@ global.mAttacks = [{
     command: 'attack',
     callback:function(a,b,c){
         var b = "Available attacks: /{attacks}"
-        Call(b.replace('{attacks}', mLearned.join(', ')));
+        Call(b.replace('{attacks}', mLearned.join(', /')));
     },
     level: 1,
     mode: 1,

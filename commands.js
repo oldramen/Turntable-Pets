@@ -105,7 +105,7 @@ global.mCommands = [{
 {
     command: 'arena',
     callback: function(a,b,c){
-        isMaster(a)&&b&&("on"==b?(mArena=true,mSpeak(a,"Arena Mode Enabled!")):(mArena=false,mSpeak(a,"Arena Mode Disabled!")))
+        isMaster(a)&&b&&("on"==b?(mArena=true,Say(a,"Arena Mode Enabled!")):(mArena=false,Say(a,"Arena Mode Disabled!")))
     },
     level: 1,
     mode: 1,

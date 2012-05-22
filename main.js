@@ -89,7 +89,7 @@ global.aboutMe = function(a){
 };
 
 global.isLearned = function(a){
-  var b = ['attacked', 'stats', 'ftimedout', 'fainted'];
+  var b = ['attacked', 'stats', 'ftimedout', 'fainted', 'attack', 'potion'];
   if (mLearned.indexOf(a) != -1) return true;
   if (b.indexOf(a) != -1) return true;
   return false;
