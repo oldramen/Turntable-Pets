@@ -12,6 +12,7 @@ global.mOwnConf = null;
 global.mOwnTurn = false;
 global.mFightTime = null;
 global.mCanLearn = false;
+global.mPotions = 0;
 
 global.Offense = function(a){
     mOwnTurn = false;
@@ -31,7 +32,7 @@ global.Defense = function(a, b) {
     if (mCurrentHP < 1) return Faint();
     var e = "I got hit by "+b+" for "+a+" damage! Now at "+mCurrentHP+" HP!";
     mArena?Say(e):Call(e);
-    Call("It's your turn! Pick an /attack!");
+    Call("It's your turn! Use a /potion, or pick an /attack!");
 };
 
 global.Damage = function(a, b) {
@@ -203,6 +204,40 @@ global.mAttacks = [{
     mode: 1,
     hidden: true,
     hint: 'faints'
+},
+{
+    command: 'potion',
+    callback: function(a, b, c) {
+        if (mPotions > 0) {
+            var d = mHP / 2;
+            if (mHP - mCurrentHP < d) d = mHP - mCurrentHP;
+            mCurrentHP += d;
+            PM(mOpponent, "/pass potion");
+            mFightTime = setTimeout(function(){ 
+                PM(mOpponent, "/ftimedout");
+                Call('Fight Timed Out!');
+                CalledOut = mOpponent = mOpHealth = null;mFighting = mOwnTurn = false;
+            }, 30000)
+        }
+    },
+    level: 1,
+    mode: 1,
+    hidden: true,
+    hint: 'uses a pot'
+},
+{
+    command: 'pass',
+    callback: function(a, b, c) {
+        clearTimeout(mFightTime);
+        mOwnTurn = true;
+        if (b == 'potion') e = "Opponent used a potion, my turn!";
+        mArena?Say(e):Call(e);
+        Call("It's your turn! Use a /potion, or pick an /attack!");
+    },
+    level: 1,
+    mode: 1,
+    hidden: true,
+    hint: 'uses a pot'
 },
 ///Now that we have the handshakes out of the way, the actual attacks
 {

@@ -104,7 +104,7 @@ global.Save = function(y, z) {
     if(!y || !z) {
       a.name = mName, a.type = mType, a.exp = mExp, a.hunger = mHunger,
       a.level = mLevel, a.clean = mClean, a.hp = mCurrentHP, a.mhp = mHP,
-      a.wins = mWins, a.losses = mLosses, a.learned = mLearned
+      a.wins = mWins, a.losses = mLosses, a.learned = mLearned, a.pots = mPotions
     }
     y && z && (eval("a." + y + " = " + z), Log(a.y + " = " + z));
     store.insert(a, function(a) { if(a) { return console.log(a) }
@@ -199,6 +199,7 @@ global.LevelUp = function(a) {
   if (a > mLevel) {
     if (mType > 3) { 
       mHP += 50;
+      mPotions += 3;
       mCurrentHP = mHP;
     }
     Say(mOwner, "I've leveled up! I'm now level " + a + "!"); 
