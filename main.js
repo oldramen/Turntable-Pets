@@ -9,7 +9,7 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4fb42b96df5bcf5587292adc";
-global.mDBName = 'fight16';
+global.mDBName = 'fight30';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
@@ -30,6 +30,7 @@ global.store = nano.use(mDBName);
 Log("Connecting to TT");
 global.mPet = new mTTAPI(mAuthId, mUserId, mRoomId);
 
+global.mFirstRun = false;
 global.mHeartBeat = null;
 global.mHunger = 100;
 global.mClean = 20;
@@ -131,14 +132,41 @@ global.BootUp = function() {
     LevelUp();
   }, 5*1000);
   store.get(mUserId, function(b, a) {
+    if(b && "not_found" == b.error) { return Create(); }else { if(b) { return console.log(b) }
+      Log("Connected to doc:");console.log(a);
+      mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;mCurrentHP = a.hp;
+      mHP = a.mhp;mWins = a.wins;mLosses = a.losses;mLearned = a.learned;
+    }
+  });
+  store.get('users', function(b, a) {
+    if(b) { return console.log(b) }
+    a[mUserId] = {name:mName, type:mType, variant:mVar};
+    store.insert(a, 'users', function(a){if(a){return console.log(a)}});
+  });
+};
+
+global.Create = function() {
+  store.get(mUserId, function(b, a) {
     if(b && "not_found" == b.error) {
       Log("Doc not found, creating");
-      store.insert({name:mName, type:mType, exp:mExp, hunger:mHunger, level:mLevel, clean:mClean}, mUserId, function(a){if(a){return console.log(a)}
+      var doc = {name:mName, type:mType, exp:mExp, hunger:mHunger, level:mLevel, clean:mClean};
+      store.insert(doc, mUserId, function(a){if(a){return console.log(a)}
       Log("Pet Created");
     })}else { if(b) { return console.log(b) }
-    Log("Connected to doc:");console.log(a);
-    mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;mCurrentHP = a.hp;
-    mHP = a.mhp;mWins = a.wins;mLosses = a.losses;mLearned = a.learned;
+      Log("Connected to doc:");console.log(a);
+      mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;mCurrentHP = a.hp;
+      mHP = a.mhp;mWins = a.wins;mLosses = a.losses;mLearned = a.learned;
+    }
+  });
+  store.get('users', function(b, a) {
+    if(b && "not_found" == b.error) {
+      Log("Users doc not found, creating");
+      var doc = {};doc[mUserId] = {name:mName, type:mType, variant:mVar};
+      store.insert(doc, 'users', function(a){if(a){return console.log(a)}
+      Log("Users doc Created");
+    })}else { if(b) { return console.log(b) }
+      a[mUserId] = {name:mName, type:mType, variant:mVar};
+      store.insert(a, 'users', function(a){if(a){return console.log(a)}});
     }
   });
 };

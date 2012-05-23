@@ -76,7 +76,7 @@ var fCommands = [{
           mOwnConf = setTimeout(function() {
             PM(mOpponent, "/ftimedout");
             Call("Fight Timed Out!");
-            mOpponent = CalledOut = null
+            mOpponent = CalledOut = null;
           }, 15000)
       };
       if (mCooldown) {PM(a, "/cooldown")}
