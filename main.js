@@ -9,7 +9,7 @@ global.Log = function(a) {
 };
 
 global.mRoomId = global.mCurrentRoom = "4fb42b96df5bcf5587292adc";
-global.mDBName = 'fight30';
+global.mDBName = 'fight33';
 
 global.mTTAPI = require("ttapi");
 global.util = require("util");
@@ -135,13 +135,13 @@ global.BootUp = function() {
     if(b && "not_found" == b.error) { return Create(); }else { if(b) { return console.log(b) }
       Log("Connected to doc:");console.log(a);
       mHunger = a.hunger;mExp = a.exp;mLevel = a.level;mClean = a.clean;mCurrentHP = a.hp;
-      mHP = a.mhp;mWins = a.wins;mLosses = a.losses;mLearned = a.learned;
+      mHP = a.mhp;mWins = a.wins;mLosses = a.losses;mLearned = a.learned;mPotions = a.pots
     }
   });
   store.get('users', function(b, a) {
     if(b) { return console.log(b) }
     a[mUserId] = {name:mName, type:mType, variant:mVar};
-    store.insert(a, 'users', function(a){if(a){return console.log(a)}});
+    store.insert(a, 'users', function(a){if(a){return console.log(a)} Log("Updated users db")});
   });
 };
 
@@ -198,7 +198,8 @@ global.Call = function(a) {
 
 global.PM = function(a, b) {
   b = b.replace("{username}", mUsers[a]);
-  mPet.pm(b, a)
+  mPet.pm(b, a);
+  console.log("Sent: "+b);
 };
 
 global.Say = function(a, b) {
