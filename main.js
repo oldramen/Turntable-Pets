@@ -32,6 +32,7 @@ global.mPet = new mTTAPI(mAuthId, mUserId, mRoomId);
 
 global.mFirstRun = false;
 global.mHeartBeat = null;
+global.mUpdating = null;
 global.mHunger = 100;
 global.mClean = 20;
 global.mExp = 0;
@@ -50,17 +51,23 @@ global.mHP = null;
 global.mCurrentHP = mHP;
 global.mStay = false;
 global.mUsers = [];
+global.mPets = [];
 global.gameMasters = ['4e0ff328a3f751670a084ba6'];
 global.mLearned = ['headbutt', 'scratch', 'tackle'];
 
-global.OnRegistered = function(a) {
-  if(a.user[0].userid == mUserId) {
-    mBooted ? UpdateRoom() : (BootUp(), mBooted = true)
-  }else {
-    for(i = 0;i < a.user.length;i++) {
-      mUsers.push({userid: a.user[i].userid, name: a.user[i].name}), Log("Registering " + a.user[i].name)
-    }
-  }
+global.OnRegistered = function(a) { 
+  if(a.user[0].userid == mUserId) mBooted ? UpdateRoom() : (BootUp(), mBooted = true);
+  for(i = 0;i < a.user.length;i++) {
+    var sId = a.user[i].userid;var sName = a.user[i].name;
+    mUsers.push({userid: sId, name: sName}); 
+    store.get("users", function(a, c) {
+      if(a) return console.log(a);
+      if(c[sId]) {
+        Log("Registering pet " + sName);
+        if (mPets.indexOf(sId) == -1) mPets.push(sId);
+      } else { Log("Registering user " + sName); }
+    })
+  } 
   150 < mUsers.length && (Call("Too many people, hiding in the playpen"), mPet.roomRegister(mRoomId));
 };
 
@@ -84,13 +91,18 @@ global.isMaster = function(a) {
   return false;
 };
 
+global.isPet = function(a){
+  if (mPets.indexOf(a) != -1) return true;
+  return false;
+};
+
 global.aboutMe = function(a){
   if (b == '@'+mName) return true;
   return false;
 };
 
 global.isLearned = function(a){
-  var b = ['attacked', 'stats', 'ftimedout', 'fainted', 'attack', 'potion'];
+  var b = ['attacked', 'stats', 'ftimedout', 'fainted', 'attack', 'potion', 'pass'];
   if (mLearned.indexOf(a) != -1) return true;
   if (b.indexOf(a) != -1) return true;
   return false;
@@ -121,14 +133,9 @@ global.BootUp = function() {
   Stalk(mOwner, 1);
   mHeartBeat = setInterval(function() {
     Loop()
-  }, 15 * 1000);
+  }, 15 * 100);
+  UpdateRoom();
   setTimeout(function(){
-    mPet.roomInfo(function(a) {
-      for(i = 0;i < a.users.length;i++) {
-        mUsers.push({userid: a.users[i].userid, name: a.users[i].name});
-        Log("Registering " + a.users[i].name);
-      };
-    });
     LevelUp();
   }, 5*1000);
   store.get(mUserId, function(b, a) {
@@ -173,13 +180,23 @@ global.Create = function() {
 
 global.UpdateRoom = function () {
   mUsers = [];
-  setTimeout(function(){
-    mPet.roomInfo(function(a) {
-      for(i = 0;i < a.users.length;i++) {
-        mUsers.push({userid: a.users[i].userid, name: a.users[i].name}), Log("Registering " + a.users[i].name), mCurrentRoom = a.room.roomid;
-      }
+  clearTimeout(mUpdating);
+  mUpdating = setTimeout(function(){
+    store.get("users", function(a,b){
+      if (a) return console.log(a);
+      mPet.roomInfo(function(c){
+        for (var i = c.users.length - 1; i >= 0; i--) {
+          var sId = c.users[i].userid; var sName = c.users[i].name;
+          mUsers.push({userid: sId, name: sName});
+          if (b[sId]) {
+            Log("Registering pet "+sName);
+            if (mPets.indexOf(sId) == -1) mPets.push(sId);
+          } else { Log("Registering user "+sName); }
+        };
+        mCurrentRoom = c.room.roomid;
+      })
     });
-  }, 5* 1000);  
+  }, 5 * 1000);  
 };
 
 global.Loop = function() {
