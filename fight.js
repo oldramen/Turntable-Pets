@@ -52,23 +52,18 @@ var fCommands = [{
     command: 'fight',
     callback: function(b, a) {
         if(mType > 3) {
-            if(mCooldown) { return PM(mOwner, mCoolDownFight) }
+            if(mCooldown) return PM(mOwner, mCoolDownFight);
             for(i = 0;i < mUsers.length;i++) {
                 var x = mUsers[i].userid;
-                if (mUsers[i].name == a) {
-                    store.get("users", function(a, c) {
-                        if(a) return console.log(a);
-                        if(c[x]) {
-                            Log("User is pet");
-                            PM(x, "/reqconf " + mCurrentHP + " " + mName);
-                            CalledOut = true;mOpponent = x;
-                            mConfTime = setTimeout(function() {
-                                CalledOut = false;
-                                mOpponent = null;
-                            }, 5E3);
-                        } else { Log("User is not pet, aborting"); }
-                    })
-                } 
+                if (mUsers[i].name == a && isPet(x)) {
+                    Log("User is pet");
+                    PM(x, "/reqconf " + mCurrentHP + " " + mName);
+                    CalledOut = true;mOpponent = x;
+                    mConfTime = setTimeout(function() {
+                        CalledOut = false;
+                        mOpponent = null;
+                    }, 5E3);
+                } else if (mUsers[i].name == a) { Log("User is not pet, aborting"); }
             }
         }
     },
@@ -80,25 +75,19 @@ var fCommands = [{
 {
     command: 'reqconf',
     callback: function(e, b) {
-      if(!CalledOut && !mCooldown && !mOpponent) {
-            store.get("users", function(a, c) {
-                if(a) return console.log(a);
-                if(c[e]) {
-                    Log("User is pet");
-                    CalledOut = true;mOpponent = e;
-                    var c=b.split(" ");var d = c.shift();b = c.join(' ');
-                    mOpHealth = d;
-                    Call(b + " wants to fight! Type /accept to fight!");
-                    PM(e, "/sendconf "+mCurrentHP);
-                    mOwnConf = setTimeout(function() {
-                        PM(mOpponent, "/ftimedout");
-                        Call("Fight Timed Out!");
-                        mOpponent = CalledOut = null;
-                    }, 15000)
-                } else { Log("User is not pet, aborting"); }
-            });
-        }
-      if (mCooldown) {PM(e, "/cooldown")}
+        if(isPet(e) && mCooldown) return PM(e, "/cooldown");
+        if(!CalledOut && !mCooldown && !mOpponent && isPet(e)) {
+            CalledOut = true;mOpponent = e;
+            var c=b.split(" ");var d = c.shift();b = c.join(' ');
+            mOpHealth = d;
+            Call(b + " wants to fight! Type /accept to fight!");
+            PM(e, "/sendconf "+mCurrentHP);
+            mOwnConf = setTimeout(function() {
+                PM(mOpponent, "/ftimedout");
+                Call("Fight Timed Out!");
+                mOpponent = CalledOut = null;
+            }, 15000)
+        }   
     },
     level: 1,
     mode: 1,
@@ -232,6 +221,7 @@ global.mAttacks = [{
             var d = mHP / 2;
             if (mHP - mCurrentHP < d) d = mHP - mCurrentHP;
             mCurrentHP += d;
+            Call("Restored "+d+" HP!");
             PM(mOpponent, "/pass potion");
             mFightTime = setTimeout(function(){ 
                 PM(mOpponent, "/ftimedout");
@@ -251,7 +241,7 @@ global.mAttacks = [{
         clearTimeout(mFightTime);
         mOwnTurn = true;
         if (b == 'potion') e = "Opponent used a potion, my turn!";
-        mArena?Say(e):Call(e);
+        mArena?Say(a, e):Call(e);
         Call("It's your turn! Use a /potion, or pick an /attack!");
     },
     level: 1,
