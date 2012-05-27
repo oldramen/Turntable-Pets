@@ -133,7 +133,7 @@ global.BootUp = function() {
   Stalk(mOwner, 1);
   mHeartBeat = setInterval(function() {
     Loop()
-  }, 15 * 100);
+  }, 15 * 1000);
   UpdateRoom();
   setTimeout(function(){
     LevelUp();
@@ -201,7 +201,8 @@ global.UpdateRoom = function () {
 
 global.Loop = function() {
   mFatigue++;
-  0 === mFatigue % 120 && mPet.speak(Random(mIdle));
+  var x = Math.random();x = x * 100;x = Math.ceil(x);
+  if (x > 98) mPet.speak(Random(mIdle));
   240 == mFatigue && (mClean--, mHunger--, mFatigue = 0, Save());
   20 > mHunger && Call(Random(mHungry));
   20 > mHunger && !mHungry && (mHungry = !0, Call(Random(mHungry)));

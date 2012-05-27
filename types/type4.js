@@ -60,8 +60,8 @@ var dAttacks = [{
     hint: 'Scorch. Range: 5 - 35'
 },
 {
-    command: 'claw'
-    callback: function (a,b,c) {) {
+    command: 'claw',
+    callback: function (a,b,c) { 
         if (!mOwnTurn) return Call("It's not my turn to attack!");
         var dmg = Damage(this.min, this.max);
         PM(mOpponent, "/attacked claw "+dmg);
@@ -70,7 +70,20 @@ var dAttacks = [{
     level: 2,
     min: 15,
     max: 25,
-    hint: "Claw. Range 15 - 25"
+    hint: "Claw. Range: 15 - 25"
+},
+{
+    command: 'wingslash',
+    callback: function (a,b,c) {
+        if (!mOwnTurn) return Call("It's not my turn to attack!");
+        var dmg = Damage(this.min, this.max);
+        PM(mOpponent, "/attacked wingslash "+dmg);
+        Offense(dmg);
+    },
+    level: 5,
+    min: 30,
+    max: 50,
+    hint: "Wing Slash. Range: 30 - 50"
 }]
 
 mCommands = _.union(mCommands, sCommands);
