@@ -113,7 +113,7 @@ global.mCommands = [{
     hint: 'gm command to go into Arena mode'
 },
 {
-    command: 'test',
+    command: 'test2',
     callback: function(a,b,c){
         console.log(mPets);
         console.log(mUsers);
