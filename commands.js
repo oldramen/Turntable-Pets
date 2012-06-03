@@ -22,7 +22,7 @@ global.mCommands = [{
 {
     command: 'pets',
     callback: function (a,b,c) {
-        if (!b) return Call("There are currently "+mPets.length+" users in the room");
+        if (!b) return Call("There are currently "+mPets.length+" pets in the room!");
         if (b == "list") {
             var d = [];
             for (var i=0;i<mPets.length;i++){
