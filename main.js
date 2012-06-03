@@ -97,7 +97,7 @@ global.isPet = function(a){
 };
 
 global.aboutMe = function(a){
-  if (b == '@'+mName) return true;
+  if (a == '@'+mName) return true;
   return false;
 };
 
