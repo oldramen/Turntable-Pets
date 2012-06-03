@@ -20,6 +20,24 @@ global.mCommands = [{
     hint: 'Tells available actions'
 },
 {
+    command: 'pets',
+    callback: function (a,b,c) {
+        if (!b) return Call("There are currently "+mPets.length+" users in the room");
+        if (b == "list") {
+            var d = [];
+            for (var i=0;i<mPets.length;i++){
+                d.push(mUsers[mPets[i]]);
+            }
+            var e = d.join(", ");
+            Call("List of Pets: "+e);
+        };
+    },
+    level: 0,
+    mode: 1,
+    owner: true,
+    hint: 'displays information about pets in the room'
+},
+{
     command: 'speak',
     callback: function (a, b, c) {
         Say(a, Random(mSpeak)), LevelUp(50);
@@ -42,7 +60,7 @@ global.mCommands = [{
     hint: 'Tells the bots stats.'
 },
 {
-	command: 'feed',
+    command: 'feed',
 	callback: function (a, b, c) {
         var x = 100 - mHunger;if (x > 50) x = 50;
         100 != mHunger && (PM(a, Random(mFed)), mHunger += x, LevelUp(1));
@@ -113,7 +131,7 @@ global.mCommands = [{
     hint: 'gm command to go into Arena mode'
 },
 {
-    command: 'test2',
+    command: 'test',
     callback: function(a,b,c){
         console.log(mPets);
         console.log(mUsers);
